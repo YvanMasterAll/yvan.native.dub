@@ -1,7 +1,7 @@
 import faker from 'faker'
 import _ from 'lodash'
 
-let MockVideoList = ({num}) => {
+let MockDubVideoList = ({num}) => {
     return new _.times(num, (i) => {
         return {
             id:faker.random.number(),
@@ -15,4 +15,19 @@ let MockVideoList = ({num}) => {
     })
 }
 
-export  { MockVideoList }
+let MockTopicVideoList = new _.times(28, (i) => {
+    return {
+        id:i,
+        index:i,
+        key:i,
+        avatar: faker.image.avatar(),
+        name: faker.internet.userName(),
+        title: faker.date.future(),
+        hits: faker.random.number(),
+        thumbsup: faker.random.number(),
+        comments: faker.random.number(),
+        video: faker.random.image()
+    }
+})
+
+export  { MockDubVideoList, MockTopicVideoList }

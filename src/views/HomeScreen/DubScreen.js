@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Image, StyleSheet, View, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native'
-import { Container, Text, Content, Grid, Col, Row, Button, Toast } from 'native-base'
+import { Image, StyleSheet, View, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { Container, Text, Content, Grid, Col, Row } from 'native-base'
 import Svg, { Path, Defs, LinearGradient, Stop, Ellipse, Text as SvgText } from 'react-native-svg'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import PropTypes from 'prop-types'
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
 })
 
 
-import { MockVideoList } from '../FakerMocks'
+import { MockDubVideoList } from '../FakerMocks'
 import DubVideoItem from './DubVideoItem'
 class DubVideoSolidItem extends Component {
     static propTypes = {
@@ -69,7 +69,7 @@ class DubVideoSolidItem extends Component {
 
     _onFetch = async () => {
         let o = this
-        let items = MockVideoList({num: this.props.num})
+        let items = MockDubVideoList({num: this.props.num})
         items.map(function(item, index) {
             o.state.items.push(item)
         })
@@ -172,7 +172,6 @@ class DubVideoList extends Component {
         title: PropTypes.string,
         desc: PropTypes.string,
         num: PropTypes.number,
-        length: PropTypes.number,
         page: PropTypes.number
     }
 
@@ -180,9 +179,6 @@ class DubVideoList extends Component {
         super(props)
 
         this.state = {
-            items: [],
-            refreshing: false,
-            hasMore: true,
             page: props.page
         }
     }
@@ -222,11 +218,11 @@ class DubVideoList extends Component {
 
     _onFetch = async (page = 1, startFetch, abortFetch) => {
         try {
-            let pageLimit = 10
+            let pageLimit = this.props.num
             let skip = (page - 1) * pageLimit
 
             //Generate dummy data
-            let rowData = MockVideoList({num: this.props.num})
+            let rowData = MockDubVideoList({num: this.props.num})
 
             //Simulate the end of the list if there is no more data returned from the server
             if (page === this.state.page) {
@@ -239,16 +235,6 @@ class DubVideoList extends Component {
         } catch (err) {
             abortFetch() //manually stop the refresh or pagination if it encounters network error
         }
-    }
-
-    _onRefresh = async () => {
-        if(this.state.refreshing) return
-        this.setState({ refreshing: true })
-        if(this.state.items.length >= this.props.length) {
-            this.setState({ hasMore: false })
-            return
-        }
-        await this._onFetch()
     }
 
     _renderItem = (item, index, separator) => {

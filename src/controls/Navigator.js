@@ -13,6 +13,7 @@ import VipScreen from '../containers/VipScreen'
 import ActivityScreen from '../containers/ActivityScreen'
 import SortScreen from '../containers/SortScreen'
 import DubVideoScreen from '../containers/DubVideoScreen'
+import TopicVideoFullScreen from '../containers/TopicVideoFullScreen'
 
 const Navigator = StackNavigator({
     Root: {
@@ -88,6 +89,10 @@ const Navigator = StackNavigator({
     DubVideo: {
         screen: DubVideoScreen,
         path: 'dubvideo/:title'
+    },
+    TopicVideoFullScreen: {
+        screen: TopicVideoFullScreen,
+        path: 'topicvideofullscreen/:type:currentTime:video'
     }
 },
 {

@@ -90,7 +90,7 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 25
     buildToolsVersion "23.0.1"
 
     defaultConfig {
@@ -106,10 +106,10 @@ android {
     signingConfigs {
         release {
             if (project.hasProperty('MYAPP_RELEASE_STORE_FILE')) {
-                storeFile file(MYAPP_RELEASE_STORE_FILE)
-                storePassword MYAPP_RELEASE_STORE_PASSWORD
-                keyAlias MYAPP_RELEASE_KEY_ALIAS
-                keyPassword MYAPP_RELEASE_KEY_PASSWORD
+                storeFile file("./dubbing.keystore")
+                storePassword "19920213"
+                keyAlias "dubbing"
+                keyPassword "19920213"
             }
         }
     }
@@ -144,6 +144,9 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-material-kit')
+    compile project(':lottie-react-native')
+    compile project(':react-native-video')
     compile project(':react-native-svg')
     compile project(':react-native-vector-icons')
     compile fileTree(dir: "libs", include: ["*.jar"])

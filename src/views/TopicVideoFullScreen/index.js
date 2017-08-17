@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { TouchableOpacity, StyleSheet, Image, View, Easing, Animated, TouchableWithoutFeedback } from 'react-native'
-import { Left, Right, Thumbnail, Text, Button, Grid, Row, Col } from 'native-base'
+import { Left, Right, Thumbnail, Text, Button, Grid, Row, Col, Container } from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import * as Animatable from 'react-native-animatable'
 import Animation from 'lottie-react-native'
@@ -11,77 +11,21 @@ import {checked_done} from '../../constants/Animations'
 import Theme from '../../constants/Theme'
 const width = Theme.deviceWidth, height = Theme.deviceHeight
 
-export default class TopicVideoItem extends Component {
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            paused: true
-        }
-    }
-
+export default class TopicVideoFullScreen extends Component {
     render() {
         return (
-            <Grid style={s.container}>
-                <Row style={{padding: 8}}>
-                    <Left style={s.verticalCenter}>
-                        <Thumbnail source={{uri: this.props.avatar}} />
-                        <Text style={s.mdRight}>{this.props.name}</Text>
-                    </Left>
-                    <Right>
-                        <Button iconLeft bordered>
-                            <Icon name='add' />
-                            <Text>关注</Text>
-                        </Button>
-                    </Right>
-                </Row>
-                <Row>
-                    <Col>
-                        <VideoControl video={this.props.video} music={this.props.music} {...this.props} />
-                    </Col>
-                </Row>
-                <Row style={{padding: 16}}>
-                    <Left style={s.verticalCenter}>
-                        <Icon name='play-circle-filled' />
-                        <Text style={s.smRight}>{this.props.hits}</Text>
-                    </Left>
-                    <Right style={s.verticalCenter}>
-                        <Icon name='thumb-up' style={s.mdRight} />
-                        <Text style={s.smRight}>{this.props.thumbsup}</Text>
-                        <Icon name='message' style={s.mdRight} />
-                        <Text style={s.smRight}>{this.props.comments}</Text>
-                        <Icon name='share' style={s.mdRight} />
-                        <Text style={s.smRight}>分享</Text>
-                    </Right>
-                </Row>
-            </Grid>
+            <Container>
+                <VideoControl {...this.props} />
+            </Container>
         )
     }
 }
-
-const s = StyleSheet.create({
-    container: {
-        width: width,
-    },
-    verticalCenter: {
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
-    smRight: {
-        marginLeft: 4
-    },
-    mdRight: {
-        marginLeft: 8
-    }
-})
 
 import Video from 'react-native-video'
 class VideoControl extends Component {
     render() {
         return (
-            <View>
-                <VideoPlayer video={this.props.video} music={this.props.music} {...this.props} />
-            </View>
+            <VideoPlayer video={this.props.navigation.state.params.video} currentTime={this.props.navigation.state.params.currentTime} {...this.props} />
         )
     }
 }
@@ -91,13 +35,13 @@ class VideoPlayer extends Component {
         super(props)
 
         this.state = {
-            rate: 0,
+            rate: 1,
             volume: 1,
             muted: false,
             resizeMode: 'contain', //'cover' & 'stretch'
             duration: 0.0,
-            currentTime: 0.0,
-            paused: true,
+            currentTime: props.currentTime,
+            paused: false,
             dropDown: 1,
             isReady: false,
             waitTimes: 0,
@@ -111,6 +55,7 @@ class VideoPlayer extends Component {
     video: Video
 
     onLoad = (data) => {
+        this.video.seek(this.props.currentTime)
         this.setState({ duration: data.duration, isReady: true})
     }
 
@@ -173,11 +118,12 @@ class VideoPlayer extends Component {
         this.video.seek(t)
     }
 
-    gotoFullScreen() {
+    goBack() {
         this.setState({
-            paused: true
+            paused: true,
+            rate: 0
         })
-        this.props.navigation.navigate("TopicVideoFullScreen", {type: 'normal', video: this.props.video, currentTime: this.state.currentTime})
+        this.props.navigation.goBack()
     }
 
     onPause = () => {
@@ -263,17 +209,31 @@ class VideoPlayer extends Component {
     renderPlayControl() {
         if(this.state.waitTimes >= this.state.upWaitTimes || (!this.state.paused && !this.state.isReady)) {
             return (
-                <View style={{position: 'absolute', width: 30, height: 30, left: (width / 2 - 15), top: 110 - 15}}>
-                    <mdl.Spinner />
+                <View style={{width: width, height: height, position: 'absolute'}}>
+                    <View style={{position: 'absolute', width: 30, height: 30, left: (height / 2 - 15), top: width / 2 - 15}}>
+                        <mdl.Spinner />
+                    </View>
+                    <View style={{position: 'absolute', left: 15, top: 15}}>
+                        <TouchableOpacity onPress={this.goBack.bind(this)}>
+                            <Icon name="arrow-back" style={{color: "#fff", fontSize: 20}}/>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             )
         } else {
             if(this.state.control) {
                 return (
-                    <View style={{position: 'absolute', width: 50, height: 50, left: (width / 2 - 25), top: 110 - 25}}>
-                        <TouchableOpacity onPress={this.onPause}>
-                            <Icon name={this.state.paused? 'play-arrow' : 'pause'} style={{color: '#fff', fontSize: 40}}/>
-                        </TouchableOpacity>
+                    <View style={{width: width, height: height, position: 'absolute'}}>
+                        <View style={{position: 'absolute', width: 30, height: 30, left: (height / 2 - 15), top: width / 2 - 15}}>
+                            <TouchableOpacity onPress={this.onPause}>
+                                <Icon name={this.state.paused? 'play-arrow' : 'pause'} style={{color: '#fff', fontSize: 40}}/>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{position: 'absolute', left: 15, top: 15}}>
+                            <TouchableOpacity onPress={this.goBack.bind(this)}>
+                                <Icon name="arrow-back" style={{color: "#fff", fontSize: 20}}/>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 )
             }
@@ -281,11 +241,11 @@ class VideoPlayer extends Component {
     }
 
     render() {
-        const flexCompleted = this.getCurrentTimePercentage() * 100;
-        //const flexRemaining = (1 - this.getCurrentTimePercentage()) * 100;
+        const flexCompleted = this.getCurrentTimePercentage() * 100
+        //const flexRemaining = (1 - this.getCurrentTimePercentage()) * 100
 
         return (
-            <View style={styles.container}>
+            <View style={[styles.container, {transform:[{rotateZ: '90deg'}, {translateX: (height - width) / 2},{translateY: (height - width) / 2}]}]}>
                 <TouchableWithoutFeedback
                     style={styles.fullScreen}
                     onPress={this.operControl.bind(this)}
@@ -309,16 +269,16 @@ class VideoPlayer extends Component {
                 </TouchableWithoutFeedback>
                 
                 { this.state.isReady && this.state.control && (
-                    <View style={{position: 'absolute', left: 0, right: 0, height: 34, alignItems: 'center', backgroundColor: '#000', flexDirection: 'row', bottom: 0}}>
+                    <View style={{position: 'absolute', left: 0, width: height, height: 34, alignItems: 'center', backgroundColor: '#000', flexDirection: 'row', bottom: 0}}>
                         <View style={{width: 70, flexDirection: 'row'}}>
                             <TouchableOpacity onPress={this.onPause}>
                                 <Icon name={this.state.paused? 'play-arrow' : 'pause'} style={{color: '#fff', fontSize: 20}}/>
                             </TouchableOpacity>
                             <Text style={{color: '#fff'}}>{this.getCurrentTime()}</Text>
                         </View>
-                        <View style={{width: width - 140, flexDirection: 'row'}}>
+                        <View style={{width: height - 140, flexDirection: 'row'}}>
                             <mdl.Slider 
-                                style={{width: width - 140}} 
+                                style={{width: height - 140}} 
                                 min={0}
                                 max={100}
                                 value={flexCompleted}
@@ -327,7 +287,7 @@ class VideoPlayer extends Component {
                         </View>
                         <View style={{width: 70, flexDirection: 'row', justifyContent: 'flex-end'}}>
                             <Text style={{color: '#fff'}}>{this.getTotalTime()}</Text>
-                            <TouchableOpacity onPress={this.gotoFullScreen.bind(this)}>
+                            <TouchableOpacity onPress={this.goBack.bind(this)}>
                                 <Icon name='fullscreen' style={{color: '#fff', fontSize: 20}}/>
                             </TouchableOpacity>
                         </View>
@@ -347,15 +307,16 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        position: 'absolute',
         backgroundColor: 'black',
-        height: 220,
-        width: width
+        width: height,
+        height: width,
+        left: 0,
+        top: 0
     },
     fullScreen: {
-        height: 220,
-        width: width
+        height: '100%',
+        width: '100%'
     },
     controls: {
         backgroundColor: '#000',
@@ -621,7 +582,5 @@ class DubbingPlayer extends Component {
         )
     }
 }
-
-
 
 

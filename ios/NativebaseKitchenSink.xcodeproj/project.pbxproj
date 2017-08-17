@@ -59,6 +59,10 @@
 		F5CAF956D54448398ADCC2C2 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AE1F695B36C346C88BC1EA80 /* EvilIcons.ttf */; };
 		FFDC93E86C9B42D9BE566AF6 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 09B87D51AA6749408B167EE3 /* Zocial.ttf */; };
 		68C49317EFEC47CB9F8979A2 /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72AEFAF4B7C646A89D051FBD /* libRNSVG.a */; };
+		CCD899802BF2475A963003CF /* libRCTVideo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4360B8FBADAF4E6A8F1666F8 /* libRCTVideo.a */; };
+		2A03284EF5834469B0684F11 /* libLottieReactNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 356F5DC04F51448095F2A6A0 /* libLottieReactNative.a */; };
+		A22A29CFA106460FAAA4BD26 /* libreact-native-media-kit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93C417818C514B4DA941EB49 /* libreact-native-media-kit.a */; };
+		8C836EF9351D4E97AC39BFB4 /* libRCTMaterialKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 59B4A936633E4143BCE6AA27 /* libRCTMaterialKit.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -339,6 +343,14 @@
 		E0B6AF6620624DA0906E1C60 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		64C7769D0745478D9110722B /* RNSVG.xcodeproj */ = {isa = PBXFileReference; name = "RNSVG.xcodeproj"; path = "../node_modules/react-native-svg/ios/RNSVG.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		72AEFAF4B7C646A89D051FBD /* libRNSVG.a */ = {isa = PBXFileReference; name = "libRNSVG.a"; path = "libRNSVG.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		570D01D61F6449F9B5CDE789 /* RCTVideo.xcodeproj */ = {isa = PBXFileReference; name = "RCTVideo.xcodeproj"; path = "../node_modules/react-native-video/ios/RCTVideo.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		4360B8FBADAF4E6A8F1666F8 /* libRCTVideo.a */ = {isa = PBXFileReference; name = "libRCTVideo.a"; path = "libRCTVideo.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		B6EF24D754C94CEDA4829CC4 /* LottieReactNative.xcodeproj */ = {isa = PBXFileReference; name = "LottieReactNative.xcodeproj"; path = "../node_modules/lottie-react-native/lib/ios/LottieReactNative.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		356F5DC04F51448095F2A6A0 /* libLottieReactNative.a */ = {isa = PBXFileReference; name = "libLottieReactNative.a"; path = "libLottieReactNative.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		E3752D310427434BBE77AAF6 /* react-native-media-kit.xcodeproj */ = {isa = PBXFileReference; name = "react-native-media-kit.xcodeproj"; path = "../node_modules/react-native-media-kit/ios/react-native-media-kit.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		93C417818C514B4DA941EB49 /* libreact-native-media-kit.a */ = {isa = PBXFileReference; name = "libreact-native-media-kit.a"; path = "libreact-native-media-kit.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		893531BE93AD427B9CF608AF /* RCTMaterialKit.xcodeproj */ = {isa = PBXFileReference; name = "RCTMaterialKit.xcodeproj"; path = "../node_modules/react-native-material-kit/iOS/RCTMaterialKit.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		59B4A936633E4143BCE6AA27 /* libRCTMaterialKit.a */ = {isa = PBXFileReference; name = "libRCTMaterialKit.a"; path = "libRCTMaterialKit.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -367,6 +379,10 @@
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				C2AC6A0B632847008414C496 /* libRNVectorIcons.a in Frameworks */,
 				68C49317EFEC47CB9F8979A2 /* libRNSVG.a in Frameworks */,
+				CCD899802BF2475A963003CF /* libRCTVideo.a in Frameworks */,
+				2A03284EF5834469B0684F11 /* libLottieReactNative.a in Frameworks */,
+				A22A29CFA106460FAAA4BD26 /* libreact-native-media-kit.a in Frameworks */,
+				8C836EF9351D4E97AC39BFB4 /* libRCTMaterialKit.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -568,6 +584,10 @@
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
 				AD1E6A777BE74CE7A089E20F /* RNVectorIcons.xcodeproj */,
 				64C7769D0745478D9110722B /* RNSVG.xcodeproj */,
+				570D01D61F6449F9B5CDE789 /* RCTVideo.xcodeproj */,
+				B6EF24D754C94CEDA4829CC4 /* LottieReactNative.xcodeproj */,
+				E3752D310427434BBE77AAF6 /* react-native-media-kit.xcodeproj */,
+				893531BE93AD427B9CF608AF /* RCTMaterialKit.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1163,12 +1183,20 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-video\ios",
+					"$(SRCROOT)\..\node_modules\lottie-react-native\lib\ios\LottieReactNative",
+					"$(SRCROOT)\..\node_modules\react-native-media-kit\ios\react-native-media-kit",
+					"$(SRCROOT)\..\node_modules\react-native-material-kit\iOS\RCTMaterialKit",
 				);
 				INFOPLIST_FILE = NativebaseKitchenSinkTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
@@ -1191,12 +1219,20 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-video\ios",
+					"$(SRCROOT)\..\node_modules\lottie-react-native\lib\ios\LottieReactNative",
+					"$(SRCROOT)\..\node_modules\react-native-media-kit\ios\react-native-media-kit",
+					"$(SRCROOT)\..\node_modules\react-native-material-kit\iOS\RCTMaterialKit",
 				);
 				INFOPLIST_FILE = NativebaseKitchenSinkTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
@@ -1220,6 +1256,10 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-video\ios",
+					"$(SRCROOT)\..\node_modules\lottie-react-native\lib\ios\LottieReactNative",
+					"$(SRCROOT)\..\node_modules\react-native-media-kit\ios\react-native-media-kit",
+					"$(SRCROOT)\..\node_modules\react-native-material-kit\iOS\RCTMaterialKit",
 				);
 				INFOPLIST_FILE = NativebaseKitchenSink/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1244,6 +1284,10 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-video\ios",
+					"$(SRCROOT)\..\node_modules\lottie-react-native\lib\ios\LottieReactNative",
+					"$(SRCROOT)\..\node_modules\react-native-media-kit\ios\react-native-media-kit",
+					"$(SRCROOT)\..\node_modules\react-native-material-kit\iOS\RCTMaterialKit",
 				);
 				INFOPLIST_FILE = NativebaseKitchenSink/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1274,11 +1318,19 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-video\ios",
+					"$(SRCROOT)\..\node_modules\lottie-react-native\lib\ios\LottieReactNative",
+					"$(SRCROOT)\..\node_modules\react-native-media-kit\ios\react-native-media-kit",
+					"$(SRCROOT)\..\node_modules\react-native-material-kit\iOS\RCTMaterialKit",
 				);
 				INFOPLIST_FILE = "NativebaseKitchenSink-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
@@ -1310,11 +1362,19 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-video\ios",
+					"$(SRCROOT)\..\node_modules\lottie-react-native\lib\ios\LottieReactNative",
+					"$(SRCROOT)\..\node_modules\react-native-media-kit\ios\react-native-media-kit",
+					"$(SRCROOT)\..\node_modules\react-native-material-kit\iOS\RCTMaterialKit",
 				);
 				INFOPLIST_FILE = "NativebaseKitchenSink-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
@@ -1347,6 +1407,10 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.NativebaseKitchenSink-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1371,6 +1435,10 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);

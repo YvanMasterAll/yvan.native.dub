@@ -5,20 +5,24 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import PropTypes from 'prop-types'
 import UltimateListView from "react-native-ultimate-listview"
 
+import { MockTopicVideoList } from '../FakerMocks'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import TopicVideoItem from './TopicVideoItem'
 import Theme from '../../constants/Theme'
 const width = Theme.deviceWidth, height = Theme.deviceHeight
 
+// import VideoMock from '../VideoMock'
+// import AudioMock from '../AudioMock'
 export default class TopicScreen extends Component {
     render() {
         return (
             <Container>
-                <Text>This is TopicScreen</Text>
+                <TopicVideoList {...this.props} num={3} page={10} />
             </Container>
         )
     }
 }
+//<View style={{position: 'absolute', width: 1000, height: 1000, left: 0, top: -100, bottom: -100, backgroundColor: '#333'}} />
 
 class TopicVideoList extends Component {
     static propTypes = {
@@ -42,10 +46,10 @@ class TopicVideoList extends Component {
         try {
             let pageLimit = this.props.num
             let skip = (page - 1) * pageLimit
-
+            
             //Generate dummy data
             let rowData = MockTopicVideoList({num: this.props.num})
-
+            
             //Simulate the end of the list if there is no more data returned from the server
             if (page === this.state.page) {
                 rowData = []
@@ -62,6 +66,7 @@ class TopicVideoList extends Component {
     _renderItem = (item, index, separator) => {
         return (
             <TopicVideoItem
+                {...this.props}
                 index={item.id}
                 id={item.key}
                 avatar={item.avatar}
@@ -71,6 +76,7 @@ class TopicVideoList extends Component {
                 thumbsup={item.thumbsup}
                 comments={item.comments}
                 video={item.video}
+                music={item.music}
             />
         )
     }
@@ -89,6 +95,7 @@ class TopicVideoList extends Component {
                     onFetch={this._onFetch}
                     keyExtractor={this._keyExtractor}
                     item={this._renderItem}
+                    refreshableMode="advanced"
                     numColumns={1}
                     paginationFetchingView={this._renderPaginationFetchingView}
                     refreshableTitlePull={'下拉刷新: '}

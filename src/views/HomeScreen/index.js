@@ -24,7 +24,7 @@ const CustomTabRouter = (
         }
     },
     init: {
-        initialRouteName: '配音'
+        initialRouteName: '热门'
     }
 })
 

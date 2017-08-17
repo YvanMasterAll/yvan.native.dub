@@ -73,7 +73,7 @@ class DubVideoSolidItem extends Component {
         items.map(function(item, index) {
             o.state.items.push(item)
         })
-        await this._sleep(2000)
+        await this._sleep(1000)
         o.setState({refreshing: false, items: o.state.items, isReady: true})
     }
 

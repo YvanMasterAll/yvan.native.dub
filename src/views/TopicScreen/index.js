@@ -56,7 +56,7 @@ class TopicVideoList extends Component {
             }
 
             //Simulate the network loading in ES7 syntax (async/await)
-            await this._sleep(2000);
+            await this._sleep(1000);
             startFetch(rowData, pageLimit);
         } catch (err) {
             abortFetch() //manually stop the refresh or pagination if it encounters network error

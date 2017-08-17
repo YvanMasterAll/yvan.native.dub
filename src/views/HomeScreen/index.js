@@ -6,9 +6,9 @@ import {
 import { StackNavigator } from 'react-navigation'
 
 import HomeNavigator from '../../components/HomeNavigator'
-import DubScreen from './DubScreen'
-import TopicScreen from './TopicScreen'
-import FollowScreen from './FollowScreen'
+import DubScreen from '../DubScreen'
+import TopicScreen from '../../containers/TopicScreen'
+import FollowScreen from '../FollowScreen'
 
 const CustomTabRouter = (
 {

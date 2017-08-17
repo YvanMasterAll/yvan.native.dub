@@ -22,10 +22,10 @@ const musics = [
     'http://m10.music.126.net/20170816144318/eee2c75b34fb7b25da3e2aa931aaffbe/ymusic/b277/081a/dcb1/20454020684106e853b46589fbe98f51.mp3?&bitrate=320000'
 ]
 const videos = [
-    'http://v4.music.126.net/20170817203600/9a719996e9f9852e64cd76ccad8b6fdd/web/cloudmusic/ICAhIDUgMCJgJTEwIWA4JA==/mv/5477119/8169bf1aeae811bbc335befac4622abd.mp4',
-    'http://v4.music.126.net/20170817203600/9a719996e9f9852e64cd76ccad8b6fdd/web/cloudmusic/ICAhIDUgMCJgJTEwIWA4JA==/mv/5477119/8169bf1aeae811bbc335befac4622abd.mp4',
-    'http://v4.music.126.net/20170817203600/9a719996e9f9852e64cd76ccad8b6fdd/web/cloudmusic/ICAhIDUgMCJgJTEwIWA4JA==/mv/5477119/8169bf1aeae811bbc335befac4622abd.mp4',
-    'http://v4.music.126.net/20170817203600/9a719996e9f9852e64cd76ccad8b6fdd/web/cloudmusic/ICAhIDUgMCJgJTEwIWA4JA==/mv/5477119/8169bf1aeae811bbc335befac4622abd.mp4'
+    'http://v4.music.126.net/20170818093741/f9581fe48006c2d689b130ce419437c3/web/cloudmusic/ICAgMCYgMiIgIDYgMTBhNA==/mv/5621379/4fff8db29a83dad5cff2d8a9d6d52837.mp4',
+    'http://v4.music.126.net/20170818093741/f9581fe48006c2d689b130ce419437c3/web/cloudmusic/ICAgMCYgMiIgIDYgMTBhNA==/mv/5621379/4fff8db29a83dad5cff2d8a9d6d52837.mp4',
+    'http://v4.music.126.net/20170818093741/f9581fe48006c2d689b130ce419437c3/web/cloudmusic/ICAgMCYgMiIgIDYgMTBhNA==/mv/5621379/4fff8db29a83dad5cff2d8a9d6d52837.mp4',
+    'http://v4.music.126.net/20170818093741/f9581fe48006c2d689b130ce419437c3/web/cloudmusic/ICAgMCYgMiIgIDYgMTBhNA==/mv/5621379/4fff8db29a83dad5cff2d8a9d6d52837.mp4'
 ]
 let MockTopicVideoList = ({num}) => {
     return new _.times(num, (i) => {

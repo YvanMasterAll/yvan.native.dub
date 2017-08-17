@@ -3,7 +3,6 @@ package com.dubbing;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.github.xinthink.rnmk.ReactMaterialKitPackage;
 import com.airbnb.android.react.lottie.LottiePackage;
 import com.brentvatne.react.ReactVideoPackage;
 import com.horcrux.svg.SvgPackage;
@@ -28,7 +27,6 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new ReactMaterialKitPackage(),
             new LottiePackage(),
             new ReactVideoPackage(),
             new SvgPackage(),

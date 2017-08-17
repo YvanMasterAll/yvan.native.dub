@@ -1,5 +1,6 @@
 import {createStore, bindActionCreators, applyMiddleware, compose, combineReducers} from 'redux'
 import * as app from './modules/app'
+import * as video from './modules/video'
 
 //extend store abilities
 const primeMiddleware = (store) => (next) => (action) => {
@@ -15,7 +16,8 @@ const extendedCreateStore = compose(
 
 //multi reducer
 const reducer = combineReducers({
-    app: app.reducer
+    app: app.reducer,
+    video: video.reducer
 })
 
 export const store = extendedCreateStore(reducer);
@@ -23,6 +25,10 @@ export const store = extendedCreateStore(reducer);
 export const actions = {
     app: bindActionCreators(
         app.actions,
+        store.dispatch
+    ),
+    video: bindActionCreators(
+        video.actions,
         store.dispatch
     )
 }

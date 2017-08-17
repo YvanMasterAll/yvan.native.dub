@@ -2,10 +2,12 @@
 #
 .DS_Store
 
-# Xcode
-#
+# Apk
 android/
 ios/
+
+# Xcode
+#
 build/
 *.pbxuser
 !default.pbxuser

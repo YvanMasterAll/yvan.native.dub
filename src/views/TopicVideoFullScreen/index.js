@@ -6,6 +6,7 @@ import * as Animatable from 'react-native-animatable'
 import Animation from 'lottie-react-native'
 import { mdl } from 'react-native-material-kit'
 import moment from 'moment'
+import Slider from "react-native-slider"
 
 import {checked_done} from '../../constants/Animations'
 import Theme from '../../constants/Theme'
@@ -48,7 +49,9 @@ class VideoPlayer extends Component {
             upWaitTimes: 5,
             control: true,
             controlTimes: 0,
-            upControlTimes: 20
+            upControlTimes: 20,
+            onSlide: false,
+            currentSlideValue: 0.0
         }
     }
 
@@ -109,13 +112,21 @@ class VideoPlayer extends Component {
         })    
     }
 
-    operPress = (value) => {
-        let t = value / 100 * this.state.duration
+    operSlide = (value) => {
+        let t = value * this.state.duration
         this.setState({
             currentTime: t,
-            controlTimes: 0
+            controlTimes: 0,
+            onSlide: false,
+            currentSlideValue: value
         })
         this.video.seek(t)
+    }
+
+    onSlide() {
+        this.setState({
+            onSlide: true
+        })
     }
 
     goBack() {
@@ -133,7 +144,7 @@ class VideoPlayer extends Component {
     }
 
     onEnd = () => {
-        this.setState({ paused: true })
+        this.setState({ paused: true, currentTime: 0.0 })
         this.video.seek(0)
     }
 
@@ -248,7 +259,7 @@ class VideoPlayer extends Component {
             <View style={[styles.container, {transform:[{rotateZ: '90deg'}, {translateX: (height - width) / 2},{translateY: (height - width) / 2}]}]}>
                 <TouchableWithoutFeedback
                     style={styles.fullScreen}
-                    onPress={this.operControl.bind(this)}
+                    onPressIn={this.operControl.bind(this)}
                     >
                     <Video
                         ref={(ref: Video) => { this.video = ref }}
@@ -277,12 +288,13 @@ class VideoPlayer extends Component {
                             <Text style={{color: '#fff'}}>{this.getCurrentTime()}</Text>
                         </View>
                         <View style={{width: height - 140, flexDirection: 'row'}}>
-                            <mdl.Slider 
+                            <Slider
                                 style={{width: height - 140}} 
-                                min={0}
-                                max={100}
-                                value={flexCompleted}
-                                onChange={this.operPress}
+                                value={this.state.onSlide? this.state.currentSlideValue: flexCompleted}
+                                onValueChange={this.operSlide.bind(this)}
+                                onSlidingStart={this.onSlide.bind(this)}
+                                trackStyle={{}}
+                                thumbStyle={{}}
                                 />
                         </View>
                         <View style={{width: 70, flexDirection: 'row', justifyContent: 'flex-end'}}>

@@ -1,4 +1,0 @@
-#Thu Aug 17 13:11:18 CST 2017
-base.0=D\:\\workplace\\SVN\\React Native\\Dubbing-RN\\android\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\1f\\main
-renamed.0=classes.dex
-file.0=D\:\\workplace\\SVN\\React Native\\Dubbing-RN\\android\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\1f\\main\\classes.dex

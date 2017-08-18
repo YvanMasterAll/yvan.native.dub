@@ -1,0 +1,45 @@
+{
+  "name": "Dubbing",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "react-native start",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "test": "node node_modules/jest/bin/jest.js --watch"
+  },
+  "jest": {
+    "preset": "react-native",
+    "transformIgnorePatterns": [
+      "node_modules/(?!react-native|native-base-shoutem-theme)"
+    ]
+  },
+  "dependencies": {
+    "color": "~1.0.3",
+    "faker": "^4.1.0",
+    "lodash": "^4.17.4",
+    "lottie-react-native": "^2.2.0",
+    "moment": "^2.18.1",
+    "native-base": "^2.3.1",
+    "react": "16.0.0-alpha.13",
+    "react-native": "^0.46.4",
+    "react-native-animatable": "^1.2.3",
+    "react-native-looped-carousel": "^0.1.7",
+    "react-native-material-design": "^0.3.7",
+    "react-native-material-kit": "^0.4.1",
+    "react-native-orientation": "^3.0.0",
+    "react-native-slider": "^0.11.0",
+    "react-native-svg": "^5.4.1",
+    "react-native-ultimate-listview": "^3.1.6",
+    "react-native-vector-icons": "^4.3.0",
+    "react-native-video": "^1.2.0",
+    "react-navigation": "^1.0.0-beta.11",
+    "react-redux": "^5.0.6",
+    "react-router-native": "^4.1.1",
+    "redux": "^3.7.2"
+  },
+  "devDependencies": {
+    "jest": "20.0.4",
+    "react-test-renderer": "16.0.0-alpha.13"
+  }
+}

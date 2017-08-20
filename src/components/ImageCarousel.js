@@ -10,13 +10,14 @@ import Carousel from 'react-native-looped-carousel'
 import Theme from '../constants/Theme'
 
 const width = Theme.deviceWidth, height = Theme.deviceHeight
+const { priColor, homeNavHeight, bakColor, supColor_001, priColor_300, videoHeight, homeNavIconSize, xsFontSize, videoControlHeight, mdIconSize, priFontColor, supFontColor_001, smIconSize, smFontSize, carouselHeight } = Theme
 
 export default class ImageCarousel extends Component {
     constructor(props) {
         super(props)
 
         this.state = {
-            size: { width, height: 180 }
+            size: { width, height: carouselHeight }
         }
     }
 
@@ -28,6 +29,9 @@ export default class ImageCarousel extends Component {
                     style={this.state.size}
                     autoplay
                     pageInfo
+                    pageInfoBackgroundColor={'transparent'}
+                    pageInfoTextStyle={{ color: priColor_300, fontSize: xsFontSize, justifyContent: 'flex-start'}}
+                    pageInfoBottomContainerStyle={{backgroundColor: 'transparent', width: 80}}
                     currentPage={0}
                     onAnimateNextPage={(p) => console.log(p)}
                 >

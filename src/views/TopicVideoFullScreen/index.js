@@ -53,7 +53,8 @@ class VideoPlayer extends Component {
             controlTimes: 0,
             upControlTimes: 20,
             onSlide: false,
-            currentSlideValue: 0.0
+            currentSlideValue: 0.0,
+            exit: false
         }
     }
 
@@ -62,18 +63,27 @@ class VideoPlayer extends Component {
     componentDidMount() {
         let o = this
         BackHandler.addEventListener('topicvideo_back_from_fullscreen',() => {  
-            o.onExit(o)
+            o.onBackHandle()
         })
         o.onOrientationLeft()
     }
 
+    onBackHandle() {
+        this.setState({
+            paused: true,
+            rate: 0
+        })
+        this.onExit(this)
+    }
+
     onExit(o) {
+        o.setState({exit: true})
+        o.props.topicvideo_play_on({play_id: o.props.video, seek: true, seek_time: o.state.currentTime, fullScreen: false})
         o.onOrientationNormal()
-        o.props.topicvideo_play_on({play_id: this.props.video, seek: true, seek_time: o.state.currentTime})
     }
 
     onOrientationNormal() {
-        Orientation.unlockAllOrientations()
+        Orientation.lockToPortrait()
     }
 
     onOrientationLeft() {
@@ -245,12 +255,14 @@ class VideoPlayer extends Component {
         if(this.state.waitTimes >= this.state.upWaitTimes || (!this.state.paused && !this.state.isReady)) {
             return (
                 <View style={{width: width, height: height, position: 'absolute'}}>
-                    <View style={{position: 'absolute', width: 30, height: 30, left: (height / 2 - 15), top: width / 2 - 15}}>
-                        <mdl.Spinner />
+                    <View style={{position: 'absolute', width: 50, height: 50, left: (height / 2 - 30), top: width / 2 - 30}}>
+                        <mdl.Spinner style={{width: 50, height: 50}} />
                     </View>
                     <View style={{position: 'absolute', left: 15, top: 15}}>
                         <TouchableOpacity onPress={this.goBack.bind(this)}>
-                            <Icon name="arrow-left" style={{color: "#fff", fontSize: 20}}/>
+                            <View style={{borderRadius: 25, width: 30, height: 30, backgroundColor: 'rgba(0,0,0, 0.5)', alignItems: 'center', justifyContent: 'center'}}>
+                                <Icon name="chevron-left" style={{color: priColor, fontSize: mdIconSize}}/>
+                            </View>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -259,14 +271,18 @@ class VideoPlayer extends Component {
             if(this.state.control) {
                 return (
                     <View style={{width: width, height: height, position: 'absolute'}}>
-                        <View style={{position: 'absolute', width: 30, height: 30, left: (height / 2 - 15), top: width / 2 - 15}}>
+                        <View style={{position: 'absolute', width: 50, height: 50, left: (height / 2 - 30), top: width / 2 - 30}}>
                             <TouchableOpacity onPress={this.onPause}>
-                                <Icon name={this.state.paused? 'play-circle-outline' : 'pause-circle-outline'} style={{color: priColor, fontSize: 38}}/>
+                                <View style={{borderRadius: 25, width: 50, height: 50, backgroundColor: 'rgba(0,0,0, 0.5)', alignItems: 'center', justifyContent: 'center'}}>
+                                    <Icon name={this.state.paused? 'play' : 'pause'} style={{color: priColor, fontSize: 38}}/>
+                                </View>
                             </TouchableOpacity>
                         </View>
                         <View style={{position: 'absolute', left: 15, top: 15}}>
                             <TouchableOpacity onPress={this.goBack.bind(this)}>
-                                <Icon name="arrow-left" style={{color: priColor, fontSize: mdIconSize}}/>
+                                <View style={{borderRadius: 25, width: 34, height: 34, backgroundColor: 'rgba(0,0,0, 0.5)', alignItems: 'center', justifyContent: 'center'}}>
+                                    <Icon name="chevron-left" style={{color: priColor, fontSize: mdIconSize}}/>
+                                </View>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -278,7 +294,12 @@ class VideoPlayer extends Component {
     render() {
         const flexCompleted = this.getCurrentTimePercentage()
         //const flexRemaining = (1 - this.getCurrentTimePercentage())
-
+    
+        if(this.state.exit) {
+            return (
+                <View></View>
+            )
+        }
         return (
             <View style={[styles.container]}>
                 <StatusBar
@@ -308,13 +329,13 @@ class VideoPlayer extends Component {
                 
                 { this.state.isReady && this.state.control && (
                     <View style={{position: 'absolute', left: 0, right: 0, height: videoControlHeight, alignItems: 'center', justifyContent: 'center', backgroundColor: priFontColor, flexDirection: 'row', bottom: 0}}>
-                        <View style={{flex: .2, flexDirection: 'row', alignItems: 'center'}}>
+                        <View style={{flex: .15, flexDirection: 'row', alignItems: 'center'}}>
                             <TouchableOpacity onPress={this.onPause}>
                                 <Icon name={this.state.paused? 'play' : 'pause'} style={{color: priColor, fontSize: mdIconSize, paddingLeft: 4, paddingRight: 4}}/>
                             </TouchableOpacity>
                             <Text style={{color: priColor}}>{this.getCurrentTime()}</Text>
                         </View>
-                        <View style={{flex: .6, flexDirection: 'row'}}>
+                        <View style={{flex: .7, flexDirection: 'row'}}>
                             <Slider
                                 style={{flex: 1, position: 'relative', top: 1}} 
                                 value={this.state.onSlide? this.state.currentSlideValue: flexCompleted}
@@ -324,7 +345,7 @@ class VideoPlayer extends Component {
                                 thumbStyle={{width: 16, height: 16, backgroundColor: supFontColor_001}}
                                 />
                         </View>
-                        <View style={{flex:.2, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
+                        <View style={{flex:.15, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
                             <Text style={{color: priColor}}>{this.getTotalTime()}</Text>
                             <TouchableOpacity onPress={this.goBack.bind(this)}>
                                 <Icon name='fullscreen-exit' style={{color: priColor, fontSize: mdIconSize, paddingLeft: 4, paddingRight: 4}}/>
@@ -347,7 +368,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         position: 'absolute',
-        backgroundColor: 'black',
+        backgroundColor: priFontColor,
         width: height,
         height: width,
         left: 0,

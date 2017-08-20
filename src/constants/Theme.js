@@ -52,7 +52,8 @@ export default {
     rootNavHeight: 50, 
     homeNavHeight: 48,
     videoControlHeight: 38,
-    videoHeight: 220,
+    videoHeight: 240,
+    carouselHeight: 180,
 
     // FontSize
     rootNavIconSize: 28,

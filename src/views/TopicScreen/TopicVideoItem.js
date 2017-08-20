@@ -5,7 +5,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import * as Animatable from 'react-native-animatable'
 import Animation from 'lottie-react-native'
 import { mdl } from 'react-native-material-kit'
-import moment from 'moment'
 import Slider from "react-native-slider"
 import Orientation from 'react-native-orientation'
 
@@ -32,7 +31,7 @@ export default class TopicVideoItem extends Component {
                         <Text style={{marginLeft: 8, color: priFontColor}}>{this.props.name}</Text>
                     </Left>
                     <Right>
-                        <Button iconLeft bordered style={{borderColor: supColor_001}}>
+                        <Button iconLeft bordered style={{borderColor: supColor_001, height: 38}}>
                             <Icon name='plus' style={{color: supColor_001, fontSize: mdIconSize}}/>
                             <Text style={{color: supColor_001}}>关注</Text>
                         </Button>
@@ -103,43 +102,45 @@ class VideoPlayer extends Component {
             paused: true,
             dropDown: 1,
             isReady: false,
+            isOnPlay: false,
             waitTimes: 0,
             upWaitTimes: 5,
             control: true,
             controlTimes: 0,
             upControlTimes: 20,
             onSlide: false,
-            currentSlideValue: 0.0
+            currentSlideValue: 0.0,
+            fullScreen: false
         }
     }
 
     video: Video
 
     onOrientationNormal() {
-        Orientation.unlockAllOrientations()
+        Orientation.lockToPortrait()
     }
 
     componentDidUpdate() {
         if(!this.state.paused) {
             if(this.props.topicvideo.play_id != this.props.video) {
                 this.setState({
-                    paused: true
+                    paused: true,
+                    waitTimes: 0,
+                    isOnPlay: false
                 })
+                this.video.seek(0.0)
             }
         } else {
             if(this.props.topicvideo.seek && this.props.topicvideo.play_id === this.props.video) {
-                this.props.topicvideo_play_on({play_id: this.props.video, seek: false, seek_time: 0.0})
                 this.setState({
                     currentTime: this.props.topicvideo.seek_time,
-                    paused: false
+                    paused: false,
+                    isOnPlay: true
                 })
                 this.video.seek(this.props.topicvideo.seek_time)
+                this.props.topicvideo_play_on({play_id: this.props.video, seek: false, seek_time: 0.0, fullScreen: false})
             }
         }
-    }
-
-    componentDidMount() {
-        console.log(this.props.navigation.state)
     }
 
     onLoad = (data) => {
@@ -217,17 +218,27 @@ class VideoPlayer extends Component {
         this.setState({
             paused: true
         })
+        this.props.topicvideo_play_on({play_id: this.props.video, seek: false, seek_time: 0.0, fullScreen: false})
         this.props.navigation.navigate("TopicVideoFullScreen", {type: 'normal', video: this.props.video, currentTime: this.state.currentTime})
     }
 
     onPause = () => {
         let paused = !this.state.paused
         if(!paused) {
-            this.props.topicvideo_play_on({play_id: this.props.video, seek: false, seek_time: 0.0})
+            this.props.topicvideo_play_on({play_id: this.props.video, seek: false, seek_time: 0.0, fullScreen: false})
         }
-        this.setState({
-            paused: !this.state.paused
-        })
+        if(paused) {
+            this.setState({
+                paused: paused,
+                isOnPlay: false
+            })
+        } else {
+            this.setState({
+                paused: paused,
+                isOnPlay: true
+            })
+        }
+        
     }
 
     onEnd = () => {
@@ -307,15 +318,15 @@ class VideoPlayer extends Component {
     renderPlayControl() {
         if(this.state.waitTimes >= this.state.upWaitTimes || (!this.state.paused && !this.state.isReady)) {
             return (
-                <View style={{position: 'absolute', width: 30, height: 30, left: (width / 2 - 15), top: 110 - 15}}>
+                <View style={{position: 'absolute', width: 50, height: 50, left: (width / 2 - 25), top: videoHeight / 2 - 25, alignItems: 'center', justifyContent: 'center'}}>
                     <mdl.Spinner />
                 </View>
             )
         } else {
             if(this.state.control) {
                 return (
-                    <View style={{position: 'absolute', width: 50, height: 50, left: (width / 2 - 25), top: 110 - 25}}>
-                        <TouchableOpacity onPress={this.onPause}>
+                    <View style={{position: 'absolute', width: 50, height: 50, alignItems: 'center', justifyContent: 'center', left: (width / 2 - 20), top: videoHeight / 2 - 20}}>
+                        <TouchableOpacity onPress={this.onPause.bind(this)} style={{width: 50, height: 50}}>
                             <Icon name={this.state.paused? 'play-circle-outline' : 'pause-circle-outline'} style={{color: priColor, fontSize: 38}}/>
                         </TouchableOpacity>
                     </View>
@@ -329,7 +340,7 @@ class VideoPlayer extends Component {
         //const flexRemaining = (1 - this.getCurrentTimePercentage()) * 100
 
         return (
-            <View style={styles.container}>
+            <View style={this.state.fullScreen? styles.fullScreenContainer : styles.container}>
                 <TouchableWithoutFeedback
                     style={styles.fullScreen}
                     onPress={this.operControl.bind(this)}
@@ -352,15 +363,15 @@ class VideoPlayer extends Component {
                     />
                 </TouchableWithoutFeedback>
                 
-                { this.state.isReady && this.state.control && (
+                { this.state.isReady && this.state.isOnPlay && this.state.control && (
                     <View style={{position: 'absolute', left: 0, right: 0, height: videoControlHeight, alignItems: 'center', justifyContent: 'center', backgroundColor: priFontColor, flexDirection: 'row', bottom: 0}}>
-                        <View style={{flex: .2, flexDirection: 'row', alignItems: 'center'}}>
-                            <TouchableOpacity onPress={this.onPause}>
+                        <View style={{flex: .25, flexDirection: 'row', alignItems: 'center'}}>
+                            <TouchableOpacity onPress={this.onPause.bind(this)}>
                                 <Icon name={this.state.paused? 'play' : 'pause'} style={{color: priColor, fontSize: mdIconSize, paddingLeft: 4, paddingRight: 4}}/>
                             </TouchableOpacity>
                             <Text style={{color: priColor}}>{this.getCurrentTime()}</Text>
                         </View>
-                        <View style={{flex: .6, flexDirection: 'row'}}>
+                        <View style={{flex: .5, flexDirection: 'row'}}>
                             <Slider
                                 style={{flex: 1, position: 'relative', top: 1}} 
                                 value={this.state.onSlide? this.state.currentSlideValue: flexCompleted}
@@ -370,7 +381,7 @@ class VideoPlayer extends Component {
                                 thumbStyle={{width: 16, height: 16, backgroundColor: supFontColor_001}}
                                 />
                         </View>
-                        <View style={{flex:.2, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
+                        <View style={{flex:.25, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
                             <Text style={{color: priColor}}>{this.getTotalTime()}</Text>
                             <TouchableOpacity onPress={this.gotoFullScreen.bind(this)}>
                                 <Icon name='fullscreen' style={{color: priColor, fontSize: mdIconSize, paddingLeft: 4, paddingRight: 4}}/>
@@ -394,13 +405,21 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'black',
+        backgroundColor: priFontColor,
         height: videoHeight,
         width: width
     },
-    fullScreen: {
-        height: videoHeight,
+    fullScreenContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: priFontColor,
+        height: height,
         width: width
+    },
+    fullScreen: {
+        width: width,
+        height: videoHeight
     },
     controls: {
         backgroundColor: priFontColor,

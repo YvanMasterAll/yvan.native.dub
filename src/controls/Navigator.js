@@ -5,9 +5,10 @@ import { View, StatusBar, TouchableOpacity } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import Theme from '../constants/Theme'
-const width = Theme.deviceWidth, height = Theme.deviceHeight, { rootNavHeight, rootNavIconSize, xsFontSize, priColor, priColor_300, supColor_001 } = Theme
+const width = Theme.deviceWidth, height = Theme.deviceHeight, { rootNavHeight, rootNavIconSize, xsFontSize, priColor, priColor_300, supColor_001, homeNavHeight } = Theme
 
 import { actions } from '../redux/configureStore'
+import { connect } from 'react-redux'
 
 import HomeScreen from '../containers/HomeScreen'
 import LearnScreen from '../containers/LearnScreen'
@@ -23,11 +24,11 @@ const navigate = (navigation) => {
     let { routeName } = navigation.state
     navigation.navigate(routeName)
     if(routeName != "首页") {
-        actions.video.topicvideo_play_on({play_id: -1, seek: false, seek_time: 0.0})
+        actions.video.topicvideo_play_on({play_id: -1, seek: false, seek_time: 0.0, fullScreen: false})
     }
 }
 
-const Navigator = StackNavigator({
+const Navigation = StackNavigator({
     Root: {
         screen: TabNavigator(
         {
@@ -140,8 +141,35 @@ const Navigator = StackNavigator({
 
 export default () =>
     <Root>
-        <Navigator />
+        <Navigation />
     </Root>
+
+// class Navigator extends Component {
+//     render() {
+//         return (
+//             <Root>
+//                 <Navigation style={this.props.topicvideo.fullScreen? {position: 'absolute', width: width, height: height + homeNavHeight, top: 0} : {}}/>
+//             </Root>
+//         )
+//     }
+// }
+
+// const mapStateToProps = (state) => {
+//     return {
+//         topicvideo: state.video.topicvideo
+//     }
+// }
+
+// const mapDispatchToProps = (dispatch, ownProps) => {
+//     return {
+//         topicvideo_play_on: (...args) => dispatch(actions.video.topicvideo_play_on(...args))
+//     }
+// }
+
+// export default connect(
+//     mapStateToProps,
+//     mapDispatchToProps
+// )(Navigator)
 
 
 

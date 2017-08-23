@@ -6,7 +6,7 @@ import {
 import { StackNavigator } from 'react-navigation'
 
 import HomeNavigator from '../../components/HomeNavigator'
-import DubScreen from '../DubScreen'
+import DubScreen from '../../containers/DubScreen'
 import TopicScreen from '../../containers/TopicScreen'
 import FollowScreen from '../FollowScreen'
 

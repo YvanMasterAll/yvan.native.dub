@@ -7,7 +7,9 @@ import {
     TouchableWithoutFeedback,
     View,
     Animated,
-    Easing
+    Easing,
+    Image,
+    StatusBar
 } from 'react-native'
 import {
     createNavigator,
@@ -18,38 +20,48 @@ import { Container, Text } from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import Theme from '../constants/Theme'
-
+const width = Theme.deviceWidth, height = Theme.deviceHeight
 const deviceWidth = Theme.deviceWidth
-const { priColor, homeNavHeight, bakColor, supColor_001, priColor_300, supColor_002, homeNavIconSize, priFontColor } = Theme
+const { priColor, homeNavHeight, bakColor, supColor_001, priColor_300, supColor_002, homeNavIconSize, priFontColor, supFontColor_001, supFontColor_002 } = Theme
 
-const HomeTabBar = ({ navigation, flush }) => {
-    const { routes } = navigation.state
-    return (
-        <View style={styles.tabContainer}>
-            <View style={{height: homeNavHeight, justifyContent: 'center', width: 74, alignItems: 'flex-start', paddingLeft: 12}}>
-                <Icon 
-                    name='menu'
-                    style={{fontSize: homeNavIconSize, color: supColor_002}}
-                />
+class HomeTabBar extends Component {
+    constructor(props) {
+        super(props)
+    
+        this.state = {
+            currentRoute: props.navigation.state.routes[0].routeName,
+            index :0
+        }
+    }
+    
+    render() {
+        let o = this
+        const { routes } = this.props.navigation.state
+        let list_icon = (this.state.index === 0 && !this.props.home_scroll_down)? require('../assets/images/home_icon_screen_gray.png') : require('../assets/images/home_icon_screen.png')
+        let search_icon = (this.state.index === 0 && !this.props.home_scroll_down)? require('../assets/images/home_icon_search_gray.png') : require('../assets/images/home_icon_search.png')
+        return (
+            <View style={{flexDirection: 'row', height: homeNavHeight, marginTop: StatusBar.currentHeight, zIndex: 1, backgroundColor: (this.state.index === 0 && !this.props.home_scroll_down)? 'transparent' : bakColor, borderBottomWidth: (this.state.index === 0 && !this.props.home_scroll_down)? 0:0.5, borderBottomColor: priColor_300 }}>
+                <View style={{height: homeNavHeight, justifyContent: 'center', width: 74, alignItems: 'flex-start', paddingLeft: 12}}>
+                    <Image source={list_icon} style={{width: 28, height: 28}} />
+                </View>
+                {routes.map((route, index) => {
+                    return (
+                        <TouchableWithoutFeedback
+                            onPress={() => { this.props.flush({name: route.routeName}); this.props.navigation.navigate(route.routeName); this.setState({currentRoute: route.routeName, index: index}); if(index === 0) {o.props.home_scroll_on({home_scroll_down: false})} }}
+                            key={route.routeName}
+                            >
+                            <View style={styles.tab}>
+                                <Text style={{color: (this.state.index === 0 && !this.props.home_scroll_down)? bakColor : this.state.currentRoute === route.routeName? supFontColor_002:supFontColor_001, top: 1}}>{route.routeName}</Text>
+                            </View>
+                        </TouchableWithoutFeedback>
+                    )}
+                )}
+                <View style={{height: homeNavHeight, justifyContent: 'center', width: 74, alignItems: 'flex-end', paddingRight: 12}}>
+                    <Image source={search_icon} style={{width: 28, height: 28}} />
+                </View>
             </View>
-            {routes.map(route => (
-                <TouchableWithoutFeedback
-                    onPress={() => { flush({name: route.routeName}); navigation.navigate(route.routeName) }}
-                    key={route.routeName}
-                    >
-                    <View style={styles.tab}>
-                        <Text style={{color: priFontColor}}>{route.routeName}</Text>
-                    </View>
-                </TouchableWithoutFeedback>
-            ))}
-            <View style={{height: homeNavHeight, justifyContent: 'center', width: 74, alignItems: 'flex-end', paddingRight: 12}}>
-                <Icon 
-                    name='magnify'
-                    style={{fontSize: homeNavIconSize, color: supColor_002}}
-                />
-            </View>
-        </View>
-    )
+        )
+    }
 }
 
 const tabWidth = (deviceWidth - 74 * 2) / 3
@@ -59,7 +71,7 @@ class HomeTabView extends Component {
 
         this.state = {
             pageIndex: 0,
-            move: new Animated.Value(tabWidth * 0 + (tabWidth - 32) / 2 + 74)
+            move: new Animated.Value(tabWidth * 0 + (tabWidth - 22) / 2 + 74)
         }
     }
 
@@ -67,7 +79,7 @@ class HomeTabView extends Component {
         var timing = Animated.timing
         Animated.parallel(['move'].map(property => {
             return timing(this.state[property], {
-                toValue: tabWidth * 0 + (tabWidth - 32) / 2 + 74,
+                toValue: tabWidth * 0 + (tabWidth - 22) / 2 + 74,
                 duration: 100,
                 easing: Easing.sin
             })
@@ -78,7 +90,7 @@ class HomeTabView extends Component {
         var timing = Animated.timing
         Animated.parallel(['move'].map(property => {
             return timing(this.state[property], {
-                toValue: tabWidth * this.state.pageIndex + (tabWidth - 32) / 2 + 74,
+                toValue: tabWidth * this.state.pageIndex + (tabWidth - 22) / 2 + 74,
                 duration: 100,
                 easing: Easing.sin
             })
@@ -110,8 +122,8 @@ class HomeTabView extends Component {
         const ActiveScreen = this.props.router.getComponentForState(this.props.navigation.state)
 
         return (
-            <Container style={styles.container}>
-                <HomeTabBar navigation={this.props.navigation} flush={this.setPageIndex.bind(this)} />
+            <Container style={{ marginTop: Platform.OS === 'ios' ? 20 : 0, backgroundColor: bakColor }}>
+                <HomeTabBar navigation={this.props.navigation} flush={this.setPageIndex.bind(this)} {...this.props} />
                 <ActiveScreen
                     navigation={addNavigationHelpers({
                     ...this.props.navigation,
@@ -123,9 +135,10 @@ class HomeTabView extends Component {
                     {
                         left: this.state.move,
                         position: 'absolute',
-                        top: homeNavHeight - 2
+                        zIndex: 9,
+                        top: homeNavHeight + StatusBar.currentHeight - 2.8
                     }]}>
-                    <View style={{width: 32, height: 2, backgroundColor: priColor_300, left: 0}} />
+                    <View style={{width: 22, height: 2, backgroundColor: this.state.pageIndex === 0? bakColor : supFontColor_002, left: 0}} />
                 </Animated.View>
             </Container>
         )
@@ -140,7 +153,7 @@ const styles = StyleSheet.create({
     tabContainer: {
         flexDirection: 'row',
         height: homeNavHeight,
-        backgroundColor: priColor
+        backgroundColor: bakColor
     },
     tab: {
         flex: 1,

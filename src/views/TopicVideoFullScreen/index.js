@@ -8,11 +8,12 @@ import moment from 'moment'
 import Slider from "react-native-slider"
 import Orientation from 'react-native-orientation'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import Color from 'color'
 
 import {checked_done} from '../../constants/Animations'
 import Theme from '../../constants/Theme'
 const width = Theme.deviceWidth, height = Theme.deviceHeight
-const { priColor, homeNavHeight, bakColor, supColor_001, priColor_300, videoHeight, homeNavIconSize, videoControlHeight, mdIconSize, priFontColor, supFontColor_001, smIconSize, smFontSize } = Theme
+const { isAndroid, priColor, homeNavHeight, bakColor, supColor_001, priColor_300, videoHeight, homeNavIconSize, videoControlHeight, mdIconSize, priFontColor, supFontColor_001, smIconSize, smFontSize } = Theme
 
 export default class TopicVideoFullScreen extends Component {
     render() {
@@ -53,7 +54,8 @@ class VideoPlayer extends Component {
             controlTimes: 0,
             upControlTimes: 20,
             onSlide: false,
-            currentSlideValue: 0.0
+            currentSlideValue: 0.0,
+            exit: false
         }
     }
 
@@ -62,18 +64,27 @@ class VideoPlayer extends Component {
     componentDidMount() {
         let o = this
         BackHandler.addEventListener('topicvideo_back_from_fullscreen',() => {  
-            o.onExit(o)
+            o.onBackHandle()
         })
         o.onOrientationLeft()
     }
 
+    onBackHandle() {
+        this.setState({
+            paused: true,
+            rate: 0
+        })
+        this.onExit(this)
+    }
+
     onExit(o) {
+        o.setState({exit: true})
+        o.props.topicvideo_play_on({play_id: o.props.video, seek: true, seek_time: o.state.currentTime, fullScreen: false})
         o.onOrientationNormal()
-        o.props.topicvideo_play_on({play_id: this.props.video, seek: true, seek_time: o.state.currentTime})
     }
 
     onOrientationNormal() {
-        Orientation.unlockAllOrientations()
+        Orientation.lockToPortrait()
     }
 
     onOrientationLeft() {
@@ -163,17 +174,18 @@ class VideoPlayer extends Component {
 
     onPause = () => {
         this.setState({
-            paused: !this.state.paused
+            paused: !this.state.paused,
+            rate: !this.state.paused? 0 : 1
         })
     }
 
     onEnd = () => {
-        this.setState({ paused: true, currentTime: 0.0 })
+        this.setState({ paused: true, currentTime: 0.0, rate: 0 })
         this.video.seek(0)
     }
 
     onAudioBecomingNoisy = () => {
-        this.setState({ paused: true })
+        this.setState({ paused: true, rate: 0 })
     }
 
     onAudioFocusChanged = (event: { hasAudioFocus: boolean }) => {
@@ -245,12 +257,14 @@ class VideoPlayer extends Component {
         if(this.state.waitTimes >= this.state.upWaitTimes || (!this.state.paused && !this.state.isReady)) {
             return (
                 <View style={{width: width, height: height, position: 'absolute'}}>
-                    <View style={{position: 'absolute', width: 30, height: 30, left: (height / 2 - 15), top: width / 2 - 15}}>
-                        <mdl.Spinner />
+                    <View style={{position: 'absolute', width: 50, height: 50, left: (height / 2 - 30), top: width / 2 - 30}}>
+                        <mdl.Spinner style={{width: 50, height: 50}} />
                     </View>
                     <View style={{position: 'absolute', left: 15, top: 15}}>
                         <TouchableOpacity onPress={this.goBack.bind(this)}>
-                            <Icon name="arrow-left" style={{color: "#fff", fontSize: 20}}/>
+                            <View style={{borderRadius: 25, width: 30, height: 30, backgroundColor: 'rgba(0,0,0, 0.5)', alignItems: 'center', justifyContent: 'center'}}>
+                                <Icon name="chevron-left" style={{top: isAndroid?0:1, color: priColor, fontSize: mdIconSize, backgroundColor: 'transparent'}}/>
+                            </View>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -259,14 +273,18 @@ class VideoPlayer extends Component {
             if(this.state.control) {
                 return (
                     <View style={{width: width, height: height, position: 'absolute'}}>
-                        <View style={{position: 'absolute', width: 30, height: 30, left: (height / 2 - 15), top: width / 2 - 15}}>
+                        <View style={{position: 'absolute', width: 50, height: 50, left: (height / 2 - 30), top: width / 2 - 30}}>
                             <TouchableOpacity onPress={this.onPause}>
-                                <Icon name={this.state.paused? 'play-circle-outline' : 'pause-circle-outline'} style={{color: priColor, fontSize: 38}}/>
+                                <View style={{borderRadius: 25, width: 50, height: 50, backgroundColor: 'rgba(0,0,0, 0.5)', alignItems: 'center', justifyContent: 'center'}}>
+                                    <Image source={this.state.paused? require('../../assets/images/topic-video-control-play.png'):require('../../assets/images/topic-video-control-stop.png')} style={{width: 24, height: 24, left: 2}} />
+                                </View>
                             </TouchableOpacity>
                         </View>
                         <View style={{position: 'absolute', left: 15, top: 15}}>
                             <TouchableOpacity onPress={this.goBack.bind(this)}>
-                                <Icon name="arrow-left" style={{color: priColor, fontSize: mdIconSize}}/>
+                                <View style={{borderRadius: 25, width: 34, height: 34, backgroundColor: 'rgba(0,0,0, 0.5)', alignItems: 'center', justifyContent: 'center'}}>
+                                    <Icon name="chevron-left" style={{top: isAndroid?0:1, color: priColor, fontSize: mdIconSize, backgroundColor: 'transparent'}}/>
+                                </View>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -278,7 +296,12 @@ class VideoPlayer extends Component {
     render() {
         const flexCompleted = this.getCurrentTimePercentage()
         //const flexRemaining = (1 - this.getCurrentTimePercentage())
-
+    
+        if(this.state.exit) {
+            return (
+                <View></View>
+            )
+        }
         return (
             <View style={[styles.container]}>
                 <StatusBar
@@ -308,26 +331,26 @@ class VideoPlayer extends Component {
                 
                 { this.state.isReady && this.state.control && (
                     <View style={{position: 'absolute', left: 0, right: 0, height: videoControlHeight, alignItems: 'center', justifyContent: 'center', backgroundColor: priFontColor, flexDirection: 'row', bottom: 0}}>
-                        <View style={{flex: .2, flexDirection: 'row', alignItems: 'center'}}>
+                        <View style={{flex: .15, flexDirection: 'row', alignItems: 'center'}}>
                             <TouchableOpacity onPress={this.onPause}>
-                                <Icon name={this.state.paused? 'play' : 'pause'} style={{color: priColor, fontSize: mdIconSize, paddingLeft: 4, paddingRight: 4}}/>
+                                <Icon name={this.state.paused? 'play' : 'pause'} style={{top: isAndroid?0:1, color: priColor, fontSize: mdIconSize, paddingLeft: 4, paddingRight: 4}}/>
                             </TouchableOpacity>
-                            <Text style={{color: priColor}}>{this.getCurrentTime()}</Text>
+                            <Text style={{color: priColor, backgroundColor: 'transparent', fontSize: Theme.xsFontSize}}>{this.getCurrentTime()}</Text>
                         </View>
-                        <View style={{flex: .6, flexDirection: 'row'}}>
+                        <View style={{flex: .7, flexDirection: 'row'}}>
                             <Slider
-                                style={{flex: 1, position: 'relative', top: 1}} 
+                                style={{flex: 1, position: 'relative', top: 1}}
                                 value={this.state.onSlide? this.state.currentSlideValue: flexCompleted}
                                 onValueChange={this.operSlide.bind(this)}
                                 onSlidingStart={this.onSlide.bind(this)}
-                                trackStyle={{height: 3, backgroundColor: priColor_300}}
-                                thumbStyle={{width: 16, height: 16, backgroundColor: supFontColor_001}}
+                                trackStyle={{height: 3, backgroundColor: Color(priFontColor).darken(.5)}}
+                                thumbStyle={{width: 16, height: 16, backgroundColor: priColor}}
                                 />
                         </View>
-                        <View style={{flex:.2, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
-                            <Text style={{color: priColor}}>{this.getTotalTime()}</Text>
+                        <View style={{flex:.15, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
+                            <Text style={{color: priColor, backgroundColor: 'transparent', fontSize: Theme.xsFontSize}}>{this.getTotalTime()}</Text>
                             <TouchableOpacity onPress={this.goBack.bind(this)}>
-                                <Icon name='fullscreen-exit' style={{color: priColor, fontSize: mdIconSize, paddingLeft: 4, paddingRight: 4}}/>
+                                <Icon name='fullscreen-exit' style={{top: isAndroid?0:1, color: priColor, fontSize: mdIconSize, paddingLeft: 4, paddingRight: 4}}/>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -347,7 +370,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         position: 'absolute',
-        backgroundColor: 'black',
+        backgroundColor: priFontColor,
         width: height,
         height: width,
         left: 0,

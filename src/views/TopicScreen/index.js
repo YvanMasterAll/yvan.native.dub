@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Image, StyleSheet, View, TouchableOpacity } from 'react-native'
+import { StatusBar, Image, StyleSheet, View, TouchableOpacity } from 'react-native'
 import { Container, Text, Content, Grid, Col, Row } from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import PropTypes from 'prop-types'
@@ -10,6 +10,7 @@ import LoadingSpinner from '../../components/LoadingSpinner'
 import TopicVideoItem from './TopicVideoItem'
 import Theme from '../../constants/Theme'
 const width = Theme.deviceWidth, height = Theme.deviceHeight
+const { homeNavHeight, rootNavHeight } = Theme
 
 // import VideoMock from '../VideoMock'
 // import AudioMock from '../AudioMock'
@@ -17,12 +18,16 @@ export default class TopicScreen extends Component {
     render() {
         return (
             <Container>
+                <StatusBar
+                    backgroundColor="transparent"
+                    translucent={true}
+                />
                 <TopicVideoList {...this.props} num={3} page={10} />
             </Container>
         )
     }
 }
-//<View style={{position: 'absolute', width: 1000, height: 1000, left: 0, top: -100, bottom: -100, backgroundColor: '#333'}} />
+//<View style={{position: 'absolute', zIndex: 9, width: 1000, height: 1000, left: 0, top: -100, bottom: -100, backgroundColor: '#333'}} />
 
 class TopicVideoList extends Component {
     static propTypes = {
@@ -56,7 +61,7 @@ class TopicVideoList extends Component {
             }
 
             //Simulate the network loading in ES7 syntax (async/await)
-            await this._sleep(1000);
+            await this._sleep(500);
             startFetch(rowData, pageLimit);
         } catch (err) {
             abortFetch() //manually stop the refresh or pagination if it encounters network error
@@ -91,6 +96,9 @@ class TopicVideoList extends Component {
         return (
             <Row>
                 <UltimateListView
+                    {...this.props}
+                    showsHorizontalScrollIndicator={false}
+                    showsVerticalScrollIndicator={false}
                     ref={(ref) => this.refs = ref}
                     onFetch={this._onFetch}
                     keyExtractor={this._keyExtractor}
@@ -109,3 +117,5 @@ class TopicVideoList extends Component {
         )
     }
 }
+
+

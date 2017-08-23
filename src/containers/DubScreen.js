@@ -1,4 +1,4 @@
-import HomeScreen from '../views/HomeScreen'
+import DubScreen from '../views/DubScreen'
 import { connect } from 'react-redux'
 import { actions } from '../redux/configureStore'
 
@@ -17,4 +17,4 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(HomeScreen)
+)(DubScreen)

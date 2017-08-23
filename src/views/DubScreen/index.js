@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Image, StyleSheet, View, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { Image, StatusBar, StyleSheet, View, TouchableOpacity, ActivityIndicator, ScrollView, TouchableWithoutFeedback } from 'react-native'
 import { Container, Text, Content, Grid, Col, Row } from 'native-base'
 import Svg, { Path, Defs, LinearGradient, Stop, Ellipse, Text as SvgText } from 'react-native-svg'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -10,6 +10,7 @@ import ImageCarousel from '../../components/ImageCarousel'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import Theme from '../../constants/Theme'
 const width = Theme.deviceWidth, height = Theme.deviceHeight
+const { priColor, carouselHeight, homeNavHeight, bakColor, supColor_001, priColor_300, mdFontSize, videoHeight, xsFontSize, homeNavIconSize, videoControlHeight, mdIconSize, priFontColor, supFontColor_001, smIconSize, smFontSize } = Theme
 
 const images = [
     'http://res.cloudinary.com/primecdn/image/upload/v1502439122/swiper-1_u3bck0.jpg',
@@ -21,9 +22,13 @@ const images = [
 export default class DubScreen extends Component {
     render() {
         return (
-            <Container>
-                <Grid>
-                    <DubVideoList {...this.props} icon={'favorite-border'} title={'猜你喜欢'} desc={'定制推荐, 如你所想'} num={10} page={10} />
+            <Container style={{top: -60, width: width, height: height, position: 'absolute'}}>
+                <StatusBar
+                    backgroundColor={this.props.home_scroll_down? bakColor:"transparent"}
+                    translucent={true}
+                />
+                <Grid style={{paddingTop: 60}}>
+                    <DubVideoList {...this.props} icon={require('../../assets/images/home-love.png')} title={'猜你喜欢'} desc={'定制推荐, 如你所想'} num={10} page={10} />
                 </Grid>
             </Container>
         )
@@ -32,10 +37,11 @@ export default class DubScreen extends Component {
 
 const styles = StyleSheet.create({
     carousel: {
-        height: 190
+        height: carouselHeight + 10
     },
     track: {
-        height: 'auto'
+        height: 'auto',
+        marginBottom: 10
         //flexDirection: 'row'
     },
     trackItem: {
@@ -51,7 +57,7 @@ import { MockDubVideoList } from '../FakerMocks'
 import DubVideoItem from './DubVideoItem'
 class DubVideoSolidItem extends Component {
     static propTypes = {
-        icon: PropTypes.string,
+        icon: PropTypes.number,
         title: PropTypes.string,
         desc: PropTypes.string,
         num: PropTypes.number
@@ -73,7 +79,7 @@ class DubVideoSolidItem extends Component {
         items.map(function(item, index) {
             o.state.items.push(item)
         })
-        await this._sleep(1000)
+        await this._sleep(500)
         o.setState({refreshing: false, items: o.state.items, isReady: true})
     }
 
@@ -90,14 +96,14 @@ class DubVideoSolidItem extends Component {
         let t = []
         let o = this
         return (
-            <View style={{marginTop: 20}}>
+            <View>
                 <View style={{paddingLeft: 12, height: 56, alignItems: 'center', flexDirection: 'row'}}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <Icon name={this.props.icon} style={{fontSize: Theme.iconSizeT1, marginRight: 8}}/>
-                        <Text style={{fontSize: Theme.fontSizeT1}}>{this.props.title}</Text>
+                        <Image source={this.props.icon} style={{width: 28, height: 28, marginRight: 8}} />
+                        <Text style={{fontSize: mdFontSize, color: priFontColor}}>{this.props.title}</Text>
                     </View>
                     <View style={{position: 'absolute', right: 8}}>
-                        <Text>{this.props.desc}</Text>
+                        <Text style={{fontSize: smFontSize, color: priColor_300}}>{this.props.desc}</Text>
                     </View>
                 </View>
                 <View>
@@ -115,52 +121,60 @@ class DubVideoSolidItem extends Component {
                         return (
                             <Row key={item.id}>
                                 <Col>
-                                    <TouchableOpacity onPress={o._onPressItem.bind(o, item)}>
+                                    <TouchableWithoutFeedback onPress={o._onPressItem.bind(o, item)}>
                                         <View style={{marginRight: 2, width: width / 2 - 2}} >
-                                            <Image source={{uri: item.image}} style={{height: 120}}/>
+                                            <Image source={{uri: item.image}} style={{height: 100}}/>
                                             <View style={{paddingLeft: 8, paddingBottom: 18, paddingTop: 4}}>
-                                                <Text style={{color: 'black', marginBottom: 4}}>{item.title}</Text>
-                                                <Text>{item.desc}</Text>
+                                                <Text style={{color: supFontColor_001, marginBottom: 4, fontSize: smFontSize}}>{item.title}</Text>
+                                                <Text style={{color: priColor_300, fontSize: xsFontSize}}>{item.desc}</Text>
                                             </View>
-                                            <View style={{position: 'absolute', left: 8, top: 94, flexDirection:'row', alignItems: 'center'}}>
-                                                <Icon name='play-circle-filled' style={{color: '#fff', fontSize: 16, marginRight: 4}}/>
-                                                <Text style={{color: '#fff'}}>{item.hits}</Text>
+                                            <View style={{position: 'absolute', left: 8, top: 84, flexDirection:'row', alignItems: 'center'}}>
+                                                <Icon name='play-circle-filled' style={{color: priColor, fontSize: smIconSize * 0.8, marginRight: 4, backgroundColor: 'transparent'}}/>
+                                                <Text style={{color: priColor, fontSize: xsFontSize, backgroundColor: 'transparent'}}>{item.hits}</Text>
                                             </View>
                                         </View>
-                                    </TouchableOpacity>
+                                    </TouchableWithoutFeedback>
                                 </Col>
                                 <Col>
-                                    <TouchableOpacity onPress={o._onPressItem.bind(o, t)} key={t.id}>
+                                    <TouchableWithoutFeedback onPress={o._onPressItem.bind(o, t)} key={t.id}>
                                         <View style={{marginLeft: 2, width: width / 2 - 2}} >
-                                            <Image source={{uri: t.image}} style={{height: 120}}/>
+                                            <Image source={{uri: t.image}} style={{height: 100}}/>
                                             <View style={{paddingLeft: 8, paddingBottom: 18, paddingTop: 4}}>
-                                                <Text style={{color: 'black', marginBottom: 4}}>{t.title}</Text>
-                                                <Text>{t.desc}</Text>
+                                                <Text style={{color: supFontColor_001, marginBottom: 4, fontSize: smFontSize}}>{t.title}</Text>
+                                                <Text style={{color: priColor_300, fontSize: xsFontSize}}>{item.desc}</Text>
                                             </View>
-                                            <View style={{position: 'absolute', left: 8, top: 94, flexDirection:'row', alignItems: 'center'}}>
-                                                <Icon name='play-circle-filled' style={{color: '#fff', fontSize: 16, marginRight: 4}}/>
-                                                <Text style={{color: '#fff'}}>{t.hits}</Text>
+                                            <View style={{position: 'absolute', left: 8, top: 84, flexDirection:'row', alignItems: 'center'}}>
+                                                <Icon name='play-circle-filled' style={{color: priColor, fontSize: smIconSize * 0.8, marginRight: 4, backgroundColor: 'transparent'}}/>
+                                                <Text style={{color: priColor, fontSize: xsFontSize, backgroundColor: 'transparent'}}>{item.hits}</Text>
                                             </View>
                                         </View>
-                                    </TouchableOpacity>
+                                    </TouchableWithoutFeedback>
                                 </Col>
                             </Row>
                         )
                     })}
                 </View>
+                <Row style={{borderTopWidth: 0.5, borderTopColor: priColor_300}}>
+                    <Col>
+                        <TouchableWithoutFeedback>
+                            <View style={{height: 46, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                                <Text style={{fontSize: smFontSize, color: Theme.supFontColor_002}}>查看更多</Text>
+                                <Icon name="keyboard-arrow-right" style={{color: Theme.supFontColor_002, fontSize: smFontSize, marginLeft: 4}} />
+                            </View>
+                        </TouchableWithoutFeedback>
+                    </Col>
+                    <Col>
+                        <TouchableWithoutFeedback>
+                            <View style={{height: 46, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                                <Text style={{fontSize: smFontSize, color: Theme.supFontColor_002}}>换一批看看</Text>
+                                <Icon name="refresh" style={{color: Theme.supFontColor_002, fontSize: smFontSize, marginLeft: 4}} />
+                            </View>
+                        </TouchableWithoutFeedback>
+                    </Col>
+                    <View style={{position: 'absolute', width: .5, height: 20, backgroundColor: priColor_300, left: width / 2, top: 13}} />
+                </Row>
                 <Row>
-                    <Col>
-                        <TouchableOpacity style={{height: 56, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                            <Text>查看更多</Text>
-                            <Icon name="keyboard-arrow-right" style={{fontSize: 18, marginLeft: 4}} />
-                        </TouchableOpacity>
-                    </Col>
-                    <Col>
-                        <TouchableOpacity style={{height: 56, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                            <Text>换一批看看</Text>
-                            <Icon name="refresh" style={{fontSize: 18, marginLeft: 4}} />
-                        </TouchableOpacity>
-                    </Col>
+                    <IntervalZone height={10} />
                 </Row>
             </View>
         )
@@ -168,7 +182,7 @@ class DubVideoSolidItem extends Component {
 }
 class DubVideoList extends Component {
     static propTypes = {
-        icon: PropTypes.string,
+        icon: PropTypes.number,
         title: PropTypes.string,
         desc: PropTypes.string,
         num: PropTypes.number,
@@ -179,7 +193,9 @@ class DubVideoList extends Component {
         super(props)
 
         this.state = {
-            page: props.page
+            page: props.page,
+            scrollDown: false,
+            scrollHeight: 140
         }
     }
 
@@ -194,20 +210,21 @@ class DubVideoList extends Component {
             <View>
                 <View style={styles.carousel}>
                     <ImageCarousel images={images} />
-                    <View style={{position: 'absolute', top: 170}}>
+                    <View style={{position: 'absolute', top: 200}}>
                         <CarouselCover />
                     </View>
                 </View>
                 <Tracks {...this.props}/>
-                <DubVideoSolidItem {...this.props} icon={'stars'} title={'今日更新'} desc={'最新视频不容错过'} num={4} />
-                <DubVideoSolidItem {...this.props} icon={'perm-contact-calendar'} title={'每日一句'} desc={'每日一练滴水石穿'} num={4} />
-                <View style={{paddingLeft: 12, height: 56, alignItems: 'center', flexDirection: 'row'}}>
+                <IntervalZone height={10} />
+                <DubVideoSolidItem {...this.props} icon={require('../../assets/images/home-star.png')} title={'今日更新'} desc={'最新视频不容错过'} num={4} />
+                <DubVideoSolidItem {...this.props} icon={require('../../assets/images/home-mission.png')} title={'每日一句'} desc={'每日一练滴水石穿'} num={4} />
+                <View style={{paddingLeft: 12, height: 56, alignItems: 'center', flexDirection: 'row', marginTop: 8}}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <Icon name={this.props.icon} style={{fontSize: Theme.iconSizeT1, marginRight: 8}}/>
-                        <Text style={{fontSize: Theme.fontSizeT1}}>{this.props.title}</Text>
+                        <Image source={this.props.icon} style={{width: 28, height: 28, marginRight: 8}} />
+                        <Text style={{fontSize: mdFontSize, color: priFontColor}}>{this.props.title}</Text>
                     </View>
                     <View style={{position: 'absolute', right: 8}}>
-                        <Text>{this.props.desc}</Text>
+                        <Text style={{fontSize: smFontSize, color: priColor_300}}>{this.props.desc}</Text>
                     </View>
                 </View>
             </View>
@@ -253,14 +270,33 @@ class DubVideoList extends Component {
 
     _renderPaginationFetchingView = () => {
         return (
-            <LoadingSpinner height={height * 0.2} text="loading..."/>
+            <LoadingSpinner height={60} text="loading..."/>
         )
+    }
+
+    onScroll = (event) => {
+        let verticalHeight = event.nativeEvent.contentOffset.y
+        if(verticalHeight >= this.state.scrollHeight && !this.state.scrollDown) {
+            this.setState({
+                scrollDown: true
+            })
+            this.props.home_scroll_on({home_scroll_down: true})
+        }
+        if(verticalHeight < this.state.scrollHeight && this.state.scrollDown) {
+            this.setState({
+                scrollDown: false
+            })
+            this.props.home_scroll_on({home_scroll_down: false})
+        }
     }
 
     render() {
         return (
-            <Row style={{marginTop: 20}}>
+            <Row>
                 <UltimateListView
+                    showsHorizontalScrollIndicator={false}
+                    showsVerticalScrollIndicator={false}
+                    onScrollEndDrag={this.onScroll.bind(this)}
                     ref={(ref) => this.refs = ref}
                     onFetch={this._onFetch}
                     keyExtractor={this._keyExtractor}
@@ -280,6 +316,14 @@ class DubVideoList extends Component {
     }
 }
 
+class IntervalZone extends Component {
+    render() {
+        return (
+            <View style={{width: width, height: this.props.height, backgroundColor: priColor}} />
+        )
+    }
+}
+
 class CarouselCover extends Component {
     render() {
         return (
@@ -289,8 +333,8 @@ class CarouselCover extends Component {
                 viewBox={"0 0 " + Theme.deviceWidth / 10 + " " + 2}
                 >
                 <Path
-                    d={"M0 0 Q" + Theme.deviceWidth / 20 + ",1.8 " + Theme.deviceWidth / 10 + ",0 L" + Theme.deviceWidth / 10 + " 2 L0 2 L0 0"}
-                    fill="#fff"
+                    d={"M0 0 Q" + Theme.deviceWidth / 20 + ",2.0 " + Theme.deviceWidth / 10 + ",0 L" + Theme.deviceWidth / 10 + " 2.4 L0 2.4 L0 0"}
+                    fill={bakColor}
                     strokeWidth='0'
                 />
             </Svg>
@@ -305,42 +349,42 @@ class Tracks extends Component {
                 <Col style={styles.trackItem}>
                     <Row style={styles.dot}>
                         <TouchableOpacity onPress={() => { this.props.navigation.navigate("Punch") }}>
-                            <Dot dot={'暑'} startColor={'purple'} stopColor={'red'} />
+                            <Image source={require('../../assets/images/home-track-001.png')} style={{width: 46, height: 46}} />
                         </TouchableOpacity>
                     </Row>
-                    <Row><Text style={{fontSize: Theme.fontSizeSM}}>每日打卡</Text></Row>
+                    <Row><Text style={{fontSize: xsFontSize * 1.1, color: supFontColor_001}}>每日打卡</Text></Row>
                 </Col>
                 <Col style={styles.trackItem}>
                     <Row style={styles.dot}>
                         <TouchableOpacity onPress={() => { this.props.navigation.navigate("Rank") }}>
-                            <Dot dot={'假'} startColor={'yellow'} stopColor={'red'} />
+                            <Image source={require('../../assets/images/home-track-002.png')} style={{width: 46, height: 46}} />
                         </TouchableOpacity>
                     </Row>
-                    <Row><Text style={{fontSize: Theme.fontSizeSM}}>排行榜</Text></Row>
+                    <Row><Text style={{fontSize: xsFontSize * 1.1, color: supFontColor_001}}>排行榜</Text></Row>
                 </Col>
                 <Col style={styles.trackItem}>
                     <Row style={styles.dot}>
                         <TouchableOpacity onPress={() => { this.props.navigation.navigate("Vip") }}>
-                            <Dot dot={'快'} startColor={'red'} stopColor={'grey'} />
+                            <Image source={require('../../assets/images/home-track-003.png')} style={{width: 46, height: 46}} />
                         </TouchableOpacity>
                     </Row>
-                    <Row><Text style={{fontSize: Theme.fontSizeSM}}>VIP专区</Text></Row>
+                    <Row><Text style={{fontSize: xsFontSize * 1.1, color: supFontColor_001}}>VIP专区</Text></Row>
                 </Col>
                 <Col style={styles.trackItem}>
                     <Row style={styles.dot}>
                         <TouchableOpacity onPress={() => { this.props.navigation.navigate("Activity") }}>
-                            <Dot dot={'乐'} startColor={'grey'} stopColor={'green'} />
+                            <Image source={require('../../assets/images/home-track-004.png')} style={{width: 46, height: 46}} />
                         </TouchableOpacity>
                     </Row>
-                    <Row><Text style={{fontSize: Theme.fontSizeSM}}>精彩活动</Text></Row>
+                    <Row><Text style={{fontSize: xsFontSize * 1.1, color: supFontColor_001}}>精彩活动</Text></Row>
                 </Col>
                 <Col style={styles.trackItem}>
                     <Row style={styles.dot}>
                         <TouchableOpacity onPress={() => { this.props.navigation.navigate("Sort") }}>
-                            <Dot dot={'!'} startColor={'purple'} stopColor={'brown'} />
+                            <Image source={require('../../assets/images/home-track-005.png')} style={{width: 46, height: 46}} />
                         </TouchableOpacity>
                     </Row>
-                    <Row><Text style={{fontSize: Theme.fontSizeSM}}>分类视频</Text></Row>
+                    <Row><Text style={{fontSize: xsFontSize * 1.1, color: supFontColor_001}}>分类视频</Text></Row>
                 </Col>
             </Row>
         )

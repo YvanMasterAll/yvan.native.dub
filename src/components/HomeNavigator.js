@@ -9,7 +9,8 @@ import {
     Animated,
     Easing,
     Image,
-    StatusBar
+    StatusBar,
+    BackHandler
 } from 'react-native'
 import {
     createNavigator,
@@ -40,7 +41,7 @@ class HomeTabBar extends Component {
         let list_icon = (this.state.index === 0 && !this.props.home_scroll_down)? require('../assets/images/home_icon_screen_gray.png') : require('../assets/images/home_icon_screen.png')
         let search_icon = (this.state.index === 0 && !this.props.home_scroll_down)? require('../assets/images/home_icon_search_gray.png') : require('../assets/images/home_icon_search.png')
         return (
-            <View style={{flexDirection: 'row', height: homeNavHeight, marginTop: StatusBar.currentHeight, zIndex: 1, backgroundColor: (this.state.index === 0 && !this.props.home_scroll_down)? 'transparent' : bakColor, borderBottomWidth: (this.state.index === 0 && !this.props.home_scroll_down)? 0:0.5, borderBottomColor: priColor_300 }}>
+            <View style={{flexDirection: 'row', height: homeNavHeight, marginTop: StatusBar.currentHeight, zIndex: 1, backgroundColor: (this.state.index === 0 && !this.props.home_scroll_down)? 'transparent' : bakColor, borderBottomWidth: (this.state.index === 0 && !this.props.home_scroll_down)? 0:0.3, borderBottomColor: Theme.bakColor_50 }}>
                 <View style={{height: homeNavHeight, justifyContent: 'center', width: 74, alignItems: 'flex-start', paddingLeft: 12}}>
                     <Image source={list_icon} style={{width: 28, height: 28}} />
                 </View>

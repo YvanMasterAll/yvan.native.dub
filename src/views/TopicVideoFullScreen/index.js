@@ -10,6 +10,7 @@ import Orientation from 'react-native-orientation'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import Color from 'color'
 
+import Styles from '../../constants/Styles'
 import {checked_done} from '../../constants/Animations'
 import Theme from '../../constants/Theme'
 const width = Theme.deviceWidth, height = Theme.deviceHeight
@@ -63,8 +64,19 @@ class VideoPlayer extends Component {
 
     componentDidMount() {
         let o = this
-        BackHandler.addEventListener('topicvideo_back_from_fullscreen',() => {  
-            o.onBackHandle()
+        BackHandler.addEventListener('topicvideo_back_from_fullscreen',() => {
+            o.setState({
+                paused: true,
+                rate: 0
+            })
+            o.setState({exit: true})
+            o.props.topicvideo_play_on({play_id: o.props.video, seek: true, seek_time: o.state.currentTime, fullScreen: false})
+            o.onOrientationNormal()
+            BackHandler.addEventListener('home_navigation_back', () => {
+                BackHandler.exitApp()
+            })
+            o.props.navigation.goBack()
+            return true
         })
         o.onOrientationLeft()
     }
@@ -169,6 +181,9 @@ class VideoPlayer extends Component {
             rate: 0
         })
         this.onExit(this)
+        BackHandler.addEventListener('home_navigation_back', () => {
+            BackHandler.exitApp()
+        })
         this.props.navigation.goBack()
     }
 
@@ -258,7 +273,7 @@ class VideoPlayer extends Component {
             return (
                 <View style={{width: width, height: height, position: 'absolute'}}>
                     <View style={{position: 'absolute', width: 50, height: 50, left: (height / 2 - 30), top: width / 2 - 30}}>
-                        <mdl.Spinner style={{width: 50, height: 50}} />
+                        <mdl.Spinner style={{width: 50, height: 50}} strokeColor={Theme.bakColor_50} />
                     </View>
                     <View style={{position: 'absolute', left: 15, top: 15}}>
                         <TouchableOpacity onPress={this.goBack.bind(this)}>
@@ -276,7 +291,7 @@ class VideoPlayer extends Component {
                         <View style={{position: 'absolute', width: 50, height: 50, left: (height / 2 - 30), top: width / 2 - 30}}>
                             <TouchableOpacity onPress={this.onPause}>
                                 <View style={{borderRadius: 25, width: 50, height: 50, backgroundColor: 'rgba(0,0,0, 0.5)', alignItems: 'center', justifyContent: 'center'}}>
-                                    <Image source={this.state.paused? require('../../assets/images/topic-video-control-play.png'):require('../../assets/images/topic-video-control-stop.png')} style={{width: 24, height: 24, left: 2}} />
+                                    <Image source={this.state.paused? require('../../assets/images/topic-video-control-play.png'):require('../../assets/images/topic-video-control-stop.png')} style={{width: 24, height: 24}} />
                                 </View>
                             </TouchableOpacity>
                         </View>
@@ -293,6 +308,22 @@ class VideoPlayer extends Component {
         }
     }
 
+    renderTitle() {
+        if(!this.state.paused && this.state.isReady && this.state.control) {
+            return (
+                <View style={{position: 'absolute', left: 0, right: 0, justifyContent: 'center', flexDirection: 'row', top: 15}}>
+                    <Text style={[Styles.text, {color: Theme.bakColor}]}>
+                        {this.props.navigation.state.params.title}
+                    </Text>
+                </View>
+            )
+        } else {
+            return (
+                <View />
+            )
+        }
+    }
+
     render() {
         const flexCompleted = this.getCurrentTimePercentage()
         //const flexRemaining = (1 - this.getCurrentTimePercentage())
@@ -306,6 +337,7 @@ class VideoPlayer extends Component {
             <View style={[styles.container]}>
                 <StatusBar
                     hidden={true}
+                    animated={false}
                     />
                 <TouchableWithoutFeedback
                     style={styles.fullScreen}
@@ -357,6 +389,8 @@ class VideoPlayer extends Component {
                 )}
                
                 { this.renderPlayControl() }
+
+                {this.renderTitle()}
             </View>
         )
     }

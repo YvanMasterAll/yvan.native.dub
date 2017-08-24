@@ -18,7 +18,7 @@ export default class DubVideoItem extends Component {
                         <Text style={{color: supFontColor_001, marginBottom: 4, fontSize: smFontSize}}>{this.props.title}</Text>
                         <Text style={{color: priColor_300, fontSize: xsFontSize}}>{this.props.desc}</Text>
                     </View>
-                    <View style={{position: 'absolute', left: 8, top: 84, flexDirection:'row', alignItems: 'center'}}>
+                    <View style={{position: 'absolute', left: 8, top: 82, flexDirection:'row', alignItems: 'center'}}>
                         <Icon name='play-circle-filled' style={{color: priColor, fontSize: smIconSize * 0.8, marginRight: 4, backgroundColor: 'transparent'}}/>
                         <Text style={{color: priColor, fontSize: xsFontSize, backgroundColor: 'transparent'}}>{this.props.hits}</Text>
                     </View>

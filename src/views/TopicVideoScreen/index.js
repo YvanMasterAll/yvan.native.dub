@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { TouchableOpacity, StyleSheet, Image, View, Easing, Animated, TouchableWithoutFeedback } from 'react-native'
+import { BackHandler, StatusBar, TouchableOpacity, StyleSheet, Image, View, Easing, Animated, TouchableWithoutFeedback } from 'react-native'
 import { Container, Thumbnail, Text, Content, Left, Right, Grid, Col, Row } from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import PropTypes from 'prop-types'
@@ -8,7 +8,10 @@ import Video from 'react-native-video'
 import Color from 'color'
 import Slider from "react-native-slider"
 import { mdl } from 'react-native-material-kit'
+import Animation from 'lottie-react-native'
+import Orientation from 'react-native-orientation'
 
+import { Thumbsup } from '../../constants/Animations'
 import { MockTopicVideoList, MockTopicVideoCommentList } from '../FakerMocks'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import Theme from '../../constants/Theme'
@@ -17,29 +20,46 @@ const width = Theme.deviceWidth, height = Theme.deviceHeight
 const { priColor, dotColor_001, isAndroid, xsFontSize, homeNavHeight, rootNavHeight, bakColor, supColor_001, dotFontColor_001, priColor_300, videoHeight, homeNavIconSize, videoControlHeight, mdIconSize, priFontColor, supFontColor_001, smIconSize, smFontSize } = Theme
 
 export default class TopicVideoScreen extends Component {
+    constructor(props) {
+        super(props) 
+
+        this.state = {
+            fullScreen: false
+        }
+    }
+
+    setFullScreen(flag) {
+        this.setState({
+            fullScreen: flag 
+        })
+    }
+
     render() {
         return (
-            <Grid style={{backgroundColor: bakColor}}>
-                <Row style={{height: videoHeight}}>
-                    <VideoControl 
-                        video={'http://115.231.144.61/5/i/k/f/u/ikfuigucfiuexlzsmrnwfswgyyrozz/hc.yinyuetai.com/CA3A015C0E08A156E3C86D7F0619E128.mp4?sc=79354dcd37128aa8&br=794&vid=2862632&aid=4539&area=US&vst=0&ptp=mv&rd=yinyuetai.com'}
-                        music={'http://link.hhtjim.com/baidu/100575177.mp3'} 
-                        {...this.props}
-                        />
-                </Row>
-                <Row>
-                    <CommentList 
-                        {...this.props} 
-                        name={'上善若水'} 
-                        avatar={'http://res.cloudinary.com/primecdn/image/upload/v1503382715/01d465573d01d36ac7253f9a014ee9_c0getz.jpg'} 
-                        time={'2017-08-15 22:00'}
-                        plays={214}
-                        thumbsup={183}
-                        num={6}
-                        page={10}
-                        />
-                </Row>
-            </Grid>
+            <Container>
+                <Grid style={{backgroundColor: bakColor}}>
+                    <Row style={this.state.fullScreen? {height: width}:{height: videoHeight}}>
+                        <VideoControl 
+                            setFullScreen={this.setFullScreen.bind(this)}
+                            video={'http://115.231.144.61/5/i/k/f/u/ikfuigucfiuexlzsmrnwfswgyyrozz/hc.yinyuetai.com/CA3A015C0E08A156E3C86D7F0619E128.mp4?sc=79354dcd37128aa8&br=794&vid=2862632&aid=4539&area=US&vst=0&ptp=mv&rd=yinyuetai.com'}
+                            music={'http://link.hhtjim.com/baidu/100575177.mp3'} 
+                            {...this.props}
+                            />
+                    </Row>
+                    <Row style={this.state.fullScreen && {display: 'none'}}>
+                        <CommentList
+                            {...this.props} 
+                            name={'上善若水'} 
+                            avatar={'http://res.cloudinary.com/primecdn/image/upload/v1503382715/01d465573d01d36ac7253f9a014ee9_c0getz.jpg'} 
+                            time={'2017-08-15 22:00'}
+                            plays={214}
+                            thumbsup={183}
+                            num={6}
+                            page={10}
+                            />
+                    </Row>
+                </Grid>
+            </Container>
         )
     }
 }
@@ -87,8 +107,37 @@ class VideoPlayer extends Component {
 
     video: Video
 
+    componentDidMount() {
+        let o = this
+        BackHandler.addEventListener('topicvideo_back_from_videoscreen',() => { 
+            if(this.state.fullScreen) {
+                this.setFullScreen(false)
+                this.onOrientationNormal()
+                return true
+            } else {
+                BackHandler.addEventListener('home_navigation_back', () => {
+                    BackHandler.exitApp()
+                })
+                this.onOrientationNormal()
+                this.props.navigation.goBack()
+                return true
+            }
+        })
+    }
+
+    setFullScreen(flag) {
+        this.setState({
+            fullScreen: flag
+        })
+        this.props.setFullScreen(flag)
+    }
+
     onOrientationNormal() {
         Orientation.lockToPortrait()
+    }
+
+    onOrientationLeft() {
+        Orientation.lockToLandscapeLeft()
     }
 
     onLoad = (data) => {
@@ -194,13 +243,13 @@ class VideoPlayer extends Component {
         })
     }
 
-    gotoFullScreen() {
-        this.setState({
-            paused: true,
-            rate: 0
-        })
-        this.props.topicvideo_play_on({play_id: this.props.video, seek: false, seek_time: 0.0, fullScreen: false})
-        this.props.navigation.navigate("TopicVideoFullScreen", {type: 'normal', video: this.props.video, currentTime: this.state.currentTime})
+    onFullScreen() {
+        if(this.state.fullScreen) {
+            this.onOrientationNormal()
+        } else {
+            this.onOrientationLeft()
+        }
+        this.setFullScreen(!this.state.fullScreen)
     }
 
     onPause = () => {
@@ -222,11 +271,18 @@ class VideoPlayer extends Component {
                 isOnPlay: true
             })
         }
-        
     }
 
     goBack() {
-        this.props.navigation.goBack()
+        if(this.state.fullScreen) {
+            this.onOrientationNormal()
+            this.setFullScreen(false)
+        } else {
+            BackHandler.addEventListener('home_navigation_back', () => {
+                BackHandler.exitApp()
+            })
+            this.props.navigation.goBack()
+        }
     }
 
     onEnd = () => {
@@ -315,13 +371,13 @@ class VideoPlayer extends Component {
     renderPlayControl() {
         if(this.state.waitTimes >= this.state.upWaitTimes || (!this.state.paused && !this.state.isReady)) {
             return (
-                <View style={{width: width, height: videoHeight, position: 'absolute', top: 0}}>
-                    <View style={{position: 'absolute', width: 50, height: 50, left: (width / 2 - 30), top: videoHeight / 2 - 30}}>
-                        <mdl.Spinner style={{width: 50, height: 50}} />
+                <View style={this.state.fullScreen? {width: height, height: width, position: 'absolute', top: 0}:{width: width, height: videoHeight, position: 'absolute', top: 0}}>
+                    <View style={this.state.fullScreen? {position: 'absolute', width: 50, height: 50, left: (height / 2 - 30), top: width / 2 - 30}:{position: 'absolute', width: 50, height: 50, left: (width / 2 - 30), top: videoHeight / 2 - 30}}>
+                        <mdl.Spinner style={{width: 50, height: 50}} strokeColor={Theme.bakColor_50} />
                     </View>
-                    <View style={{position: 'absolute', left: 15, top: 15}}>
+                    <View style={{position: 'absolute', left: 8, top: 8}}>
                         <TouchableOpacity onPress={this.goBack.bind(this)}>
-                            <View style={{borderRadius: 25, width: 30, height: 30, backgroundColor: 'rgba(0,0,0, 0.5)', alignItems: 'center', justifyContent: 'center'}}>
+                            <View style={{borderRadius: 25, width: 34, height: 34, backgroundColor: 'rgba(0,0,0, 0.5)', alignItems: 'center', justifyContent: 'center'}}>
                                 <Icon name="chevron-left" style={{top: isAndroid?0:1, color: priColor, fontSize: mdIconSize}}/>
                             </View>
                         </TouchableOpacity>
@@ -331,15 +387,15 @@ class VideoPlayer extends Component {
         } else {
             if(this.state.control) {
                 return (
-                    <View style={{width: width, height: videoHeight, position: 'absolute', top: 0}}>
-                        <View style={{position: 'absolute', width: 50, height: 50, left: (width / 2 - 30), top: videoHeight / 2 - 30}}>
+                    <View style={this.state.fullScreen? {width: height, height: width, position: 'absolute', top: 0}:{width: width, height: videoHeight, position: 'absolute', top: 0}}>
+                        <View style={this.state.fullScreen? {position: 'absolute', width: 50, height: 50, left: (height / 2 - 30), top: width / 2 - 30}:{position: 'absolute', width: 50, height: 50, left: (width / 2 - 30), top: videoHeight / 2 - 30}}>
                             <TouchableOpacity onPress={this.onPause}>
                                 <View style={{borderRadius: 25, width: 50, height: 50, backgroundColor: 'rgba(0,0,0, 0.5)', alignItems: 'center', justifyContent: 'center'}}>
-                                    <Icon name={this.state.paused? 'play' : 'pause'} style={{top: isAndroid?0:1, color: priColor, fontSize: 38}}/>
+                                    <Image source={this.state.paused? require('../../assets/images/topic-video-control-play.png'):require('../../assets/images/topic-video-control-stop.png')} style={{width: 24, height: 24}} />
                                 </View>
                             </TouchableOpacity>
                         </View>
-                        <View style={{position: 'absolute', left: 15, top: 15}}>
+                        <View style={{position: 'absolute', left: 8, top: 8}}>
                             <TouchableOpacity onPress={this.goBack.bind(this)}>
                                 <View style={{borderRadius: 25, width: 34, height: 34, backgroundColor: 'rgba(0,0,0, 0.5)', alignItems: 'center', justifyContent: 'center'}}>
                                     <Icon name="chevron-left" style={{top: isAndroid?0:1, color: priColor, fontSize: mdIconSize}}/>
@@ -352,21 +408,44 @@ class VideoPlayer extends Component {
         }
     }
 
+    renderTitle() {
+        if(!this.state.paused && this.state.isReady && this.state.control) {
+            return (
+                <View style={{position: 'absolute', left: 0, right: 0, justifyContent: 'center', flexDirection: 'row', top: 8}}>
+                    <Text style={[Styles.text, {color: Theme.bakColor}]}>
+                        {this.props.navigation.state.params.title}
+                    </Text>
+                </View>
+            )
+        } else {
+            return (
+                <View />
+            )
+        }
+    }
+
     render() {
         const flexCompleted = this.getCurrentTimePercentage()
         //const flexRemaining = (1 - this.getCurrentTimePercentage()) * 100
 
         return (
             <View style={this.state.fullScreen? styles.fullScreenContainer : styles.container}>
+                <StatusBar
+                    barStyle={'light-content'}
+                    backgroundColor={priFontColor}
+                    translucent={false}
+                    hidden={this.state.fullScreen? true:false}
+                    animated={false}
+                />
                 <TouchableWithoutFeedback
-                    style={styles.fullScreen}
+                    style={this.state.fullScreen? styles.fullScreen : styles.videoScreen}
                     onPress={this.operControl.bind(this)}
                     >
                     <View>
                         <Video
                             ref={(ref: Video) => { this.video = ref }}
                             source={{uri: this.props.video}}
-                            style={styles.fullScreen}
+                            style={this.state.fullScreen? styles.fullScreen : styles.videoScreen}
                             rate={this.state.rate}
                             paused={this.state.paused}
                             volume={this.state.volume}
@@ -400,13 +479,13 @@ class VideoPlayer extends Component {
                 
                 { this.state.isReady && this.state.isOnPlay && this.state.control && (
                     <View style={{position: 'absolute', left: 0, right: 0, height: videoControlHeight, alignItems: 'center', justifyContent: 'center', backgroundColor: priFontColor, flexDirection: 'row', bottom: 0}}>
-                        <View style={{flex: .25, flexDirection: 'row', alignItems: 'center'}}>
+                        <View style={{flex: this.state.fullScreen? 0.15:.25, flexDirection: 'row', alignItems: 'center'}}>
                             <TouchableOpacity onPress={this.onPause.bind(this)}>
                                 <Icon name={this.state.paused? 'play' : 'pause'} style={{top: isAndroid?0:1, color: priColor, fontSize: mdIconSize, paddingLeft: 4, paddingRight: 4}}/>
                             </TouchableOpacity>
                             <Text style={{color: priColor}}>{this.getCurrentTime()}</Text>
                         </View>
-                        <View style={{flex: .5, flexDirection: 'row'}}>
+                        <View style={{flex: this.state.fullScreen? 0.7:.5, flexDirection: 'row'}}>
                             <Slider
                                 style={{flex: 1, position: 'relative', top: 1}} 
                                 value={this.state.onSlide? this.state.currentSlideValue: flexCompleted}
@@ -416,16 +495,18 @@ class VideoPlayer extends Component {
                                 thumbStyle={{width: 16, height: 16, backgroundColor: supFontColor_001}}
                                 />
                         </View>
-                        <View style={{flex:.25, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
+                        <View style={{flex:this.state.fullScreen? 0.15:.25, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
                             <Text style={{color: priColor}}>{this.getTotalTime()}</Text>
-                            <TouchableOpacity onPress={this.gotoFullScreen.bind(this)}>
-                                <Icon name='fullscreen' style={{top: isAndroid?0:1, color: priColor, fontSize: mdIconSize, paddingLeft: 4, paddingRight: 4}}/>
+                            <TouchableOpacity onPress={this.onFullScreen.bind(this)}>
+                                <Icon name={this.state.fullScreen? 'fullscreen-exit':'fullscreen'} style={{top: isAndroid?0:1, color: priColor, fontSize: mdIconSize, paddingLeft: 4, paddingRight: 4}}/>
                             </TouchableOpacity>
                         </View>
                     </View>
                 )}
                 
                 { this.renderPlayControl() }
+
+                { this.renderTitle() }
             </View>
         )
     }
@@ -450,6 +531,10 @@ class CommentList extends Component {
         }
     }
 
+    thumbsUp() {
+        this.thumbsup_animation.play()
+    }
+
     _keyExtractor = (item, index) => item.id
 
     _onPressItem = (item) => {
@@ -459,16 +544,21 @@ class CommentList extends Component {
     _header() {
         return (
             <View>
-                <Row style={{width: width, height: Theme.commentHeadHeight, paddingLeft: 18, paddingRight: 18}}>
+                <Row style={{width: width, height: Theme.commentHeadHeight, paddingLeft: 18, borderBottomWidth: 0.3, borderBottomColor: Theme.bakColor_50}}>
                     <Left>
                         <View style={{flexDirection: 'row'}}>
                             <Thumbnail source={{uri: this.props.avatar}} style={{marginRight: 16}} />
+                            <View style={{position: 'absolute', width: 18, height: 18, left: 42, top: 42, zIndex: 1}}>
+                                <Image source={require('../../assets/images/ic_medal1.png')} style={{width: 18, height: 18}} />
+                            </View>
                             <View style={{paddingTop: 3}}>
                                 <Row style={{alignItems: 'center'}}>
                                     <Text style={[Styles.text, {color: dotFontColor_001}]}>
                                         {this.props.name}
                                     </Text>
-                                    <Icon name={'candycane'} style={[Styles.icon, {fontSize: smFontSize, color: dotColor_001}]} />
+                                    <View>
+                                        <Image source={require('../../assets/images/home_icon_vip_big.png')} style={{width: 40, height: 18}} />
+                                    </View>
                                 </Row>
                                 <Row style={{paddingTop: 8}}>
                                     <Text style={[Styles.text, {marginRight: 4, fontSize: xsFontSize, color: priColor_300}]}>
@@ -483,17 +573,31 @@ class CommentList extends Component {
                     </Left>
                     <Right>
                         <View style={{alignItems: 'flex-end'}}>
-                            <Icon name={'thumb-up'} style={[Styles.icon, {fontSize: mdIconSize * 1.2, color: priColor_300}]} />
-                            <Text style={[Styles.text, {color: supFontColor_001, fontSize: smFontSize, color: priColor_300}]}>{this.props.thumbsup}</Text>
+                            <TouchableWithoutFeedback
+                                onPress={this.thumbsUp.bind(this)}
+                                >
+                                <Animation
+                                    ref={thumbsup_animation => {this.thumbsup_animation = thumbsup_animation}}
+                                    style={{width: 76, height: 76}}
+                                    source={Thumbsup}
+                                />
+                            </TouchableWithoutFeedback>
+                            <View style={{width: 76, justifyContent: 'center', flexDirection: 'row', top: -16}}>
+                                <Text style={[Styles.text, {color: supFontColor_001, fontSize: smFontSize, color: priColor_300}]}>{this.props.thumbsup}</Text>
+                            </View>
                         </View>
                     </Right>
                 </Row>
                 <Row>
-                    <Text style={[Styles.text, {fontSize: Theme.mdFontSize * 0.9, color: Color(priColor_300).darken(0.5), paddingLeft: 16, paddingTop: 14}]}>热门评论</Text>
+                    <View style={{width: width, height: 10, backgroundColor: Theme.bakColor_50}} />
+                </Row>
+                <Row>
+                    <Text style={[Styles.text, {fontSize: Theme.mdFontSize * 0.9, color: Color(priColor_300).darken(0.7), paddingLeft: 16, paddingTop: 8}]}>热门评论</Text>
                 </Row>
             </View>
         )
     }
+    // <Icon name={'thumb-up'} style={[Styles.icon, {fontSize: mdIconSize * 1.2, color: priColor_300}]} />
 
     _sleep = (time) => new Promise(resolve => setTimeout(() => resolve(), time))
 
@@ -567,11 +671,11 @@ class CommentItem extends Component {
 
     render() {
         return (
-            <View style={{marginBottom: 8}}>
+            <View style={{marginBottom: 8, borderBottomWidth: 0.3, borderBottomColor: Theme.bakColor_50}}>
                 <Row style={{width: width, height: Theme.commentHeadHeight * 0.9, paddingLeft: 14, paddingRight: 20}}>
                     <Left>
                         <View style={{flexDirection: 'row'}}>
-                            <Thumbnail source={{uri: this.props.avatar}} style={{marginRight: 12, width: 44, height: 44}} />
+                            <Thumbnail source={{uri: this.props.avatar}} style={{marginRight: 12, width: 34, height: 34}} />
                             <View style={{paddingTop: 3}}>
                                 <Row style={{alignItems: 'center'}}>
                                     <Text style={[Styles.text, {color: Color(priColor_300).darken(0.5), fontSize: smFontSize * 0.9}]}>
@@ -594,7 +698,7 @@ class CommentItem extends Component {
                     </Right>
                 </Row>
                 <Row>
-                    <Text style={[Styles.text, {color: Color(priFontColor).lighten(0.5), paddingLeft: 70, paddingRight: 20}]}>
+                    <Text style={[Styles.text, {color: Color(priColor_300).darken(0.7), paddingLeft: 60, paddingRight: 8}]}>
                         {this.props.comment}
                     </Text>
                 </Row>
@@ -617,15 +721,23 @@ const styles = StyleSheet.create({
     },
     fullScreenContainer: {
         flex: 1,
+        position: 'absolute',
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: priFontColor,
-        height: height,
-        width: width
+        width: height, 
+        height: width,
+        top:0, 
+        left: 0,
+        zIndex: 9
     },
-    fullScreen: {
+    videoScreen: {
         width: width,
         height: videoHeight
+    },
+    fullScreen: {
+        width: height,
+        height: width
     },
     controls: {
         backgroundColor: priFontColor,

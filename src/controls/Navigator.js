@@ -85,7 +85,7 @@ const Navigation = StackNavigator({
                             break
                     }
                     return (
-                        <View style={{height: rootNavHeight, width: width / 4, position: 'relative', top: isAndroid ? -8 : 0, justifyContent: 'center', borderTopWidth: 0.5, borderTopColor: priColor_300}}>
+                        <View style={{height: rootNavHeight, width: width / 4, position: 'relative', top: isAndroid ? -8 : 0, justifyContent: 'center', borderTopWidth: 0.3, borderTopColor: Theme.bakColor_50}}>
                             <View style={{height: rootNavHeight, width: width / 4, justifyContent: 'center', alignItems: 'center'}}>
                                 <Image source={iconName} style={{width: 28, height: 28}} />
                                 <Text style={{fontSize: xsFontSize * 0.9, color: focused? supFontColor_002 : priColor_300, marginTop: 4}}>{routeName}</Text>
@@ -110,7 +110,7 @@ const Navigation = StackNavigator({
                     height: 24
                 },
                 style: {
-                    backgroundColor: priColor,
+                    backgroundColor: Theme.bakColor,
                     height: rootNavHeight
                 },
                 tabBarIcon: ({ tintColor }) => { Theme.tabDarkTintColor }
@@ -142,7 +142,7 @@ const Navigation = StackNavigator({
     },
     TopicVideoFullScreen: {
         screen: TopicVideoFullScreen,
-        path: 'topicvideofullscreen/:type:currentTime:video'
+        path: 'topicvideofullscreen/:type:currentTime:video:title'
     },
     TopicVideo: {
         screen: TopicVideoScreen,

@@ -23,11 +23,14 @@ export default {
     Green_600: '#43A047',
     Purple_A400: '#D500F9',
     Yellow_A400: '#FFEA00',
-    Pink_300: '#F06292',
+    Pink_600: '#D81B60',
 
     // Color Theme
     get bakColor() {
         return this.Grey_00
+    },
+    get bakColor_50() {
+        return this.Grey_50
     },
     get priColor() {
         return this.Grey_200
@@ -51,10 +54,10 @@ export default {
         return this.Grey_600
     },
     get supFontColor_002() {
-        return this.Green_600
+        return this.Green_A400
     },
     get dotFontColor_001() {
-        return this.Pink_300
+        return this.Pink_600
     },
 
     // Height

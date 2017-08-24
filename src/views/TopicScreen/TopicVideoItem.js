@@ -9,6 +9,7 @@ import Slider from "react-native-slider"
 import Orientation from 'react-native-orientation'
 import Color from 'color'
 
+import Styles from '../../constants/Styles'
 import {checked_done} from '../../constants/Animations'
 import Theme from '../../constants/Theme'
 const width = Theme.deviceWidth, height = Theme.deviceHeight
@@ -189,7 +190,7 @@ class VideoPlayer extends Component {
             paused: true,
             rate: 0
         })
-        this.props.navigation.navigate('TopicVideo')
+        this.props.navigation.navigate('TopicVideo', {title: this.props.title})
     }
 
     gotoFullScreen() {
@@ -198,7 +199,7 @@ class VideoPlayer extends Component {
             rate: 0
         })
         this.props.topicvideo_play_on({play_id: this.props.video, seek: false, seek_time: 0.0, fullScreen: false})
-        this.props.navigation.navigate("TopicVideoFullScreen", {type: 'normal', video: this.props.video, currentTime: this.state.currentTime})
+        this.props.navigation.navigate("TopicVideoFullScreen", {type: 'normal', video: this.props.video, currentTime: this.state.currentTime, title: this.props.title})
     }
 
     onPause = () => {
@@ -300,7 +301,7 @@ class VideoPlayer extends Component {
         if(this.state.waitTimes >= this.state.upWaitTimes || (!this.state.paused && !this.state.isReady)) {
             return (
                 <View style={{position: 'absolute', width: 50, height: 50, left: (width / 2 - 30), top: videoHeight / 2 - 30, alignItems: 'center', justifyContent: 'center'}}>
-                    <mdl.Spinner style={{width: 50, height: 50}} />
+                    <mdl.Spinner style={{width: 50, height: 50}} strokeColor={Theme.bakColor_50} />
                 </View>
             )
         } else {
@@ -318,6 +319,22 @@ class VideoPlayer extends Component {
         }
     }
 
+    renderTitle() {
+        if(!this.state.isOnPlay || (!this.state.paused && this.state.isReady && this.state.control)) {
+            return (
+                <View style={{position: 'absolute', left: 4, top: 8}}>
+                    <Text style={[Styles.text, {color: Theme.bakColor}]}>
+                        {this.props.title}
+                    </Text>
+                </View>
+            )
+        } else {
+            return (
+                <View />
+            )
+        }
+    }
+
     render() {
         const flexCompleted = this.getCurrentTimePercentage()
         //const flexRemaining = (1 - this.getCurrentTimePercentage()) * 100
@@ -326,11 +343,11 @@ class VideoPlayer extends Component {
             <View style={{width: width}}>
                 <Row style={{padding: 8}}>
                     <Left style={s.verticalCenter}>
-                        <Thumbnail source={{uri: this.props.avatar}} style={{width: 36, height: 36}} />
+                        <Thumbnail source={{uri: this.props.avatar}} style={{width: 36, height: 36}} iconLeft={0} iconRight={0} />
                         <Text style={{marginLeft: 8, color: priFontColor, backgroundColor: 'transparent'}}>{this.props.name}</Text>
                     </Left>
                     <Right>
-                        <Button iconLeft bordered style={{borderColor: supColor_001, height: 28}}>
+                        <Button iconLeft bordered style={{borderColor: supColor_001, height: 28, paddingLeft: 8, paddingRight: 8}}>
                             <Icon name='plus' style={{color: supColor_001, fontSize: Theme.smIconSize, backgroundColor: 'transparent'}}/>
                             <Text style={{color: supColor_001, backgroundColor: 'transparent'}}>关注</Text>
                         </Button>
@@ -388,6 +405,8 @@ class VideoPlayer extends Component {
                         )}
                        
                         { this.renderPlayControl() }
+
+                        { this.renderTitle() }
                     </View>
                 </Row>
                 <Row style={{padding: 12}}>
@@ -405,13 +424,13 @@ class VideoPlayer extends Component {
                             <Icon name='message-text-outline' style={{color: priColor_300,marginLeft: 8, fontSize: smIconSize, backgroundColor: 'transparent'}} />
                             <Text style={{marginLeft: 4, color: supFontColor_001, fontSize: smFontSize}}>{this.props.comments}</Text>
                         </TouchableOpacity>
-                        <View style={{width: 0.5, height: 15, backgroundColor: priColor_300, marginLeft: 12}} />
+                        <View style={{width: 0.5, height: 15, backgroundColor: Theme.bakColor_50, marginLeft: 12}} />
                         <Icon name='share-variant' style={{color: priColor_300,marginLeft: 12, fontSize: smIconSize, backgroundColor: 'transparent'}} />
                         <Text style={{marginLeft: 4, color: supFontColor_001, fontSize: smFontSize, backgroundColor: 'transparent'}}>分享</Text>
                     </View>
                 </Row>
                 <Row>
-                    <View style={{width: width, height: 10, backgroundColor: priColor}} />
+                    <View style={{width: width, height: 10, backgroundColor: Theme.bakColor_50}} />
                 </Row>
             </View>
         )

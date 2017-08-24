@@ -27,6 +27,12 @@ const videos = [
     'http://115.231.144.61/10/l/r/b/g/lrbgbdwjskgnpzasfrsaqfeketxbtg/hc.yinyuetai.com/B083015DEFA85FCE16AD5D7B5A672324.mp4?sc=7f11289cd931a0cb&br=779&vid=3019051&aid=40376&area=KR&vst=0&ptp=mv&rd=yinyuetai.com',
     'http://115.231.144.61/9/f/e/y/k/feykpqmdztzqpnjxfrbofvutqbwiqg/hc.yinyuetai.com/BCE9015DEB6510FAA2DEB755866A9A82.mp4?sc=5671e8c619c7ddb5&br=781&vid=3018338&aid=448&area=US&vst=0&ptp=mv&rd=yinyuetai.com',
 ]
+const titles = [
+    'wild one',
+    '最长的电影',
+    '棒子 MV',
+    '欧美 MV'
+]
 
 let MockTopicVideoList = ({num}) => {
     return new _.times(num, (i) => {
@@ -36,12 +42,12 @@ let MockTopicVideoList = ({num}) => {
             key:i,
             avatar: faker.image.avatar(),
             name: faker.internet.userName(),
-            title: faker.date.future(),
             hits: faker.random.number(),
             thumbsup: faker.random.number(),
             comments: faker.random.number(),
             video: videos[i],
-            music: musics[0]
+            music: musics[0],
+            title: titles[i]
         }
     })
 }

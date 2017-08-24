@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StatusBar, Image, StyleSheet, View, TouchableOpacity } from 'react-native'
+import { BackHandler, StatusBar, Image, StyleSheet, View, TouchableOpacity } from 'react-native'
 import { Container, Text, Content, Grid, Col, Row } from 'native-base'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import PropTypes from 'prop-types'
@@ -15,12 +15,21 @@ const { homeNavHeight, rootNavHeight } = Theme
 // import VideoMock from '../VideoMock'
 // import AudioMock from '../AudioMock'
 export default class TopicScreen extends Component {
+    componentDidMount() {
+        let o = this
+        BackHandler.addEventListener('home_navigation_back',(event) => {
+            BackHandler.exitApp()
+        })
+    }
+
     render() {
         return (
             <Container>
                 <StatusBar
+                    barStyle={'dark-content'}
                     backgroundColor="transparent"
                     translucent={true}
+                    animated={false}
                 />
                 <TopicVideoList {...this.props} num={3} page={10} />
             </Container>

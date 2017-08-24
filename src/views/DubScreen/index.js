@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Image, StatusBar, StyleSheet, View, TouchableOpacity, ActivityIndicator, ScrollView, TouchableWithoutFeedback } from 'react-native'
+import { BackHandler, Image, StatusBar, StyleSheet, View, TouchableOpacity, ActivityIndicator, ScrollView, TouchableWithoutFeedback } from 'react-native'
 import { Container, Text, Content, Grid, Col, Row } from 'native-base'
 import Svg, { Path, Defs, LinearGradient, Stop, Ellipse, Text as SvgText } from 'react-native-svg'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -20,12 +20,18 @@ const images = [
 ]
 
 export default class DubScreen extends Component {
+    componentDidMount() {
+        BackHandler.removeEventListener('home_navigation_back')
+    }
+
     render() {
         return (
             <Container style={{top: -60, width: width, height: height, position: 'absolute'}}>
                 <StatusBar
+                    barStyle={this.props.home_scroll_down? 'dark-content' : 'light-content'}
                     backgroundColor={this.props.home_scroll_down? bakColor:"transparent"}
                     translucent={true}
+                    animated={false}
                 />
                 <Grid style={{paddingTop: 60}}>
                     <DubVideoList {...this.props} icon={require('../../assets/images/home-love.png')} title={'猜你喜欢'} desc={'定制推荐, 如你所想'} num={10} page={10} />
@@ -51,7 +57,6 @@ const styles = StyleSheet.create({
         marginBottom: 8
     }
 })
-
 
 import { MockDubVideoList } from '../FakerMocks'
 import DubVideoItem from './DubVideoItem'
@@ -128,7 +133,7 @@ class DubVideoSolidItem extends Component {
                                                 <Text style={{color: supFontColor_001, marginBottom: 4, fontSize: smFontSize}}>{item.title}</Text>
                                                 <Text style={{color: priColor_300, fontSize: xsFontSize}}>{item.desc}</Text>
                                             </View>
-                                            <View style={{position: 'absolute', left: 8, top: 84, flexDirection:'row', alignItems: 'center'}}>
+                                            <View style={{position: 'absolute', left: 8, top: 82, flexDirection:'row', alignItems: 'center'}}>
                                                 <Icon name='play-circle-filled' style={{color: priColor, fontSize: smIconSize * 0.8, marginRight: 4, backgroundColor: 'transparent'}}/>
                                                 <Text style={{color: priColor, fontSize: xsFontSize, backgroundColor: 'transparent'}}>{item.hits}</Text>
                                             </View>
@@ -143,7 +148,7 @@ class DubVideoSolidItem extends Component {
                                                 <Text style={{color: supFontColor_001, marginBottom: 4, fontSize: smFontSize}}>{t.title}</Text>
                                                 <Text style={{color: priColor_300, fontSize: xsFontSize}}>{item.desc}</Text>
                                             </View>
-                                            <View style={{position: 'absolute', left: 8, top: 84, flexDirection:'row', alignItems: 'center'}}>
+                                            <View style={{position: 'absolute', left: 8, top: 82, flexDirection:'row', alignItems: 'center'}}>
                                                 <Icon name='play-circle-filled' style={{color: priColor, fontSize: smIconSize * 0.8, marginRight: 4, backgroundColor: 'transparent'}}/>
                                                 <Text style={{color: priColor, fontSize: xsFontSize, backgroundColor: 'transparent'}}>{item.hits}</Text>
                                             </View>
@@ -154,7 +159,7 @@ class DubVideoSolidItem extends Component {
                         )
                     })}
                 </View>
-                <Row style={{borderTopWidth: 0.5, borderTopColor: priColor_300}}>
+                <Row style={{borderTopWidth: 0.3, borderTopColor: Theme.bakColor_50}}>
                     <Col>
                         <TouchableWithoutFeedback>
                             <View style={{height: 46, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
@@ -171,10 +176,10 @@ class DubVideoSolidItem extends Component {
                             </View>
                         </TouchableWithoutFeedback>
                     </Col>
-                    <View style={{position: 'absolute', width: .5, height: 20, backgroundColor: priColor_300, left: width / 2, top: 13}} />
+                    <View style={{position: 'absolute', width: .5, height: 20, backgroundColor: Theme.bakColor_50, left: width / 2, top: 13}} />
                 </Row>
                 <Row>
-                    <IntervalZone height={10} />
+                    <IntervalZone height={12} />
                 </Row>
             </View>
         )
@@ -195,7 +200,7 @@ class DubVideoList extends Component {
         this.state = {
             page: props.page,
             scrollDown: false,
-            scrollHeight: 140
+            scrollHeight: 100
         }
     }
 
@@ -215,7 +220,7 @@ class DubVideoList extends Component {
                     </View>
                 </View>
                 <Tracks {...this.props}/>
-                <IntervalZone height={10} />
+                <IntervalZone height={12} />
                 <DubVideoSolidItem {...this.props} icon={require('../../assets/images/home-star.png')} title={'今日更新'} desc={'最新视频不容错过'} num={4} />
                 <DubVideoSolidItem {...this.props} icon={require('../../assets/images/home-mission.png')} title={'每日一句'} desc={'每日一练滴水石穿'} num={4} />
                 <View style={{paddingLeft: 12, height: 56, alignItems: 'center', flexDirection: 'row', marginTop: 8}}>
@@ -290,13 +295,30 @@ class DubVideoList extends Component {
         }
     }
 
+    onScrollEndDrag = (event) => {
+        let verticalHeight = event.nativeEvent.contentOffset.y
+        if(verticalHeight >= this.state.scrollHeight && !this.state.scrollDown) {
+            this.setState({
+                scrollDown: true
+            })
+            this.props.home_scroll_on({home_scroll_down: true})
+        }
+        if(verticalHeight < this.state.scrollHeight && this.state.scrollDown) {
+            this.setState({
+                scrollDown: false
+            })
+            this.props.home_scroll_on({home_scroll_down: false})
+        }
+    }
+
     render() {
         return (
             <Row>
                 <UltimateListView
                     showsHorizontalScrollIndicator={false}
                     showsVerticalScrollIndicator={false}
-                    onScrollEndDrag={this.onScroll.bind(this)}
+                    onMomentumScrollEnd={this.onScroll.bind(this)}
+                    onScrollEndDrag={this.onScrollEndDrag.bind(this)}
                     ref={(ref) => this.refs = ref}
                     onFetch={this._onFetch}
                     keyExtractor={this._keyExtractor}
@@ -319,7 +341,7 @@ class DubVideoList extends Component {
 class IntervalZone extends Component {
     render() {
         return (
-            <View style={{width: width, height: this.props.height, backgroundColor: priColor}} />
+            <View style={{width: width, height: this.props.height, backgroundColor: Theme.bakColor_50}} />
         )
     }
 }
@@ -349,42 +371,42 @@ class Tracks extends Component {
                 <Col style={styles.trackItem}>
                     <Row style={styles.dot}>
                         <TouchableOpacity onPress={() => { this.props.navigation.navigate("Punch") }}>
-                            <Image source={require('../../assets/images/home-track-001.png')} style={{width: 46, height: 46}} />
+                            <Image source={require('../../assets/images/home-track-001.png')} style={{width: 40, height: 40}} />
                         </TouchableOpacity>
                     </Row>
-                    <Row><Text style={{fontSize: xsFontSize * 1.1, color: supFontColor_001}}>每日打卡</Text></Row>
+                    <Row><Text style={{fontSize: xsFontSize, color: supFontColor_001}}>每日打卡</Text></Row>
                 </Col>
                 <Col style={styles.trackItem}>
                     <Row style={styles.dot}>
                         <TouchableOpacity onPress={() => { this.props.navigation.navigate("Rank") }}>
-                            <Image source={require('../../assets/images/home-track-002.png')} style={{width: 46, height: 46}} />
+                            <Image source={require('../../assets/images/home-track-002.png')} style={{width: 40, height: 40}} />
                         </TouchableOpacity>
                     </Row>
-                    <Row><Text style={{fontSize: xsFontSize * 1.1, color: supFontColor_001}}>排行榜</Text></Row>
+                    <Row><Text style={{fontSize: xsFontSize, color: supFontColor_001}}>排行榜</Text></Row>
                 </Col>
                 <Col style={styles.trackItem}>
                     <Row style={styles.dot}>
                         <TouchableOpacity onPress={() => { this.props.navigation.navigate("Vip") }}>
-                            <Image source={require('../../assets/images/home-track-003.png')} style={{width: 46, height: 46}} />
+                            <Image source={require('../../assets/images/home-track-003.png')} style={{width: 40, height: 40}} />
                         </TouchableOpacity>
                     </Row>
-                    <Row><Text style={{fontSize: xsFontSize * 1.1, color: supFontColor_001}}>VIP专区</Text></Row>
+                    <Row><Text style={{fontSize: xsFontSize, color: supFontColor_001}}>VIP专区</Text></Row>
                 </Col>
                 <Col style={styles.trackItem}>
                     <Row style={styles.dot}>
                         <TouchableOpacity onPress={() => { this.props.navigation.navigate("Activity") }}>
-                            <Image source={require('../../assets/images/home-track-004.png')} style={{width: 46, height: 46}} />
+                            <Image source={require('../../assets/images/home-track-004.png')} style={{width: 40, height: 40}} />
                         </TouchableOpacity>
                     </Row>
-                    <Row><Text style={{fontSize: xsFontSize * 1.1, color: supFontColor_001}}>精彩活动</Text></Row>
+                    <Row><Text style={{fontSize: xsFontSize, color: supFontColor_001}}>精彩活动</Text></Row>
                 </Col>
                 <Col style={styles.trackItem}>
                     <Row style={styles.dot}>
                         <TouchableOpacity onPress={() => { this.props.navigation.navigate("Sort") }}>
-                            <Image source={require('../../assets/images/home-track-005.png')} style={{width: 46, height: 46}} />
+                            <Image source={require('../../assets/images/home-track-005.png')} style={{width: 40, height: 40}} />
                         </TouchableOpacity>
                     </Row>
-                    <Row><Text style={{fontSize: xsFontSize * 1.1, color: supFontColor_001}}>分类视频</Text></Row>
+                    <Row><Text style={{fontSize: xsFontSize, color: supFontColor_001}}>分类视频</Text></Row>
                 </Col>
             </Row>
         )
